@@ -1,0 +1,30 @@
+<project name="Ex3">
+    
+    <property name="lib.dir" value="lib"/>
+    <property name="test.file" value="testing.py"/>
+    <property name="test_output.dir" value="pa-3-myoutput"/>
+
+    <path id="classpath">
+        <fileset dir="${lib.dir}" includes="**/*.jar"/>
+    </path>
+    
+    <target name="clean" description="Delete test folders and files">
+        <delete dir="pa-2-myoutput"/>
+        <delete file="diff.log"/>
+    </target>
+    
+    <target name="compile" description="Compile whole project" depends="clean">
+        <mkdir dir="bin"/>
+        <mkdir dir="${test_output.dir}"/>
+        <javac srcdir="src" destdir="bin" classpathref="classpath" includeantruntime="false">
+            <include name="**/*.java"/>
+        </javac>
+    </target>
+
+    <target name="testing">
+        <exec executable="python">
+            <arg value="${test.file}"/>
+        </exec>
+    </target>
+
+</project>

@@ -1,17 +1,13 @@
 package ic;
 
-import ic.ast.ASTNode;
-import ic.ast.PrettyPrinter;
-import ic.ast.Program;
-import ic.parser.Lexer;
-import ic.parser.LexicalError;
-import ic.parser.LibParser;
-import ic.parser.ParserException;
-import ic.parser.parser;
-import ic.semanticCheck.SymbolTableBuilder;
+import ic.ast.*;
+import ic.parser.*;
+import ic.semanticCheck.*;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import java_cup.runtime.Symbol;
 
@@ -47,7 +43,7 @@ public class Compiler {
     		}
     		
     		// Add the Library AST to the list of class declarations
-    		if (libraryProgramNode != null) ((Program) programNode).addClass(((Program) libraryProgramNode).getClasses().get(0));
+    		if (libraryProgramNode != null) ((Program) programNode).getClasses().add(0, ((Program) libraryProgramNode).getClasses().get(0));
     		
     		System.out.println("added library class!");
     		
@@ -55,6 +51,10 @@ public class Compiler {
             SymbolTableBuilder stb = new SymbolTableBuilder();
             programNode.accept(stb);
             System.out.println("finita!");
+            
+         // Print the symbol table
+            System.out.println();
+            printSymbolTable(stb.getRootScope());
     		
     	} catch (ParserException  | LexicalError e) {
     		System.out.println(e.getMessage());
@@ -67,4 +67,16 @@ public class Compiler {
     	}
     
     }
+    
+    public static void printSymbolTable(ScopeNode n) {
+        if (n == null)
+            return;
+        
+        System.out.print(n);
+        for (ScopeNode child : n.getChildren()) {
+            System.out.println();
+            printSymbolTable(child);
+        }
+    }
+    
 }

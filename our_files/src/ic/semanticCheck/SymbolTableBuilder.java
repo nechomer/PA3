@@ -1,38 +1,43 @@
 package ic.semanticCheck;
 
+import ic.ast.ArrayLocation;
+import ic.ast.Assignment;
+import ic.ast.BinaryOp;
+import ic.ast.Break;
+import ic.ast.CallStatement;
+import ic.ast.Continue;
+import ic.ast.Expression;
+import ic.ast.ExpressionBlock;
 import ic.ast.Field;
 import ic.ast.Formal;
 import ic.ast.ICClass;
+import ic.ast.If;
+import ic.ast.Length;
+import ic.ast.LibraryMethod;
+import ic.ast.Literal;
+import ic.ast.LocalVariable;
+import ic.ast.LogicalBinaryOp;
+import ic.ast.LogicalUnaryOp;
+import ic.ast.MathBinaryOp;
+import ic.ast.MathUnaryOp;
+import ic.ast.Method;
+import ic.ast.NewArray;
+import ic.ast.NewClass;
+import ic.ast.PrimitiveType;
 import ic.ast.Program;
+import ic.ast.Return;
+import ic.ast.Statement;
+import ic.ast.StatementsBlock;
+import ic.ast.StaticCall;
+import ic.ast.StaticMethod;
+import ic.ast.This;
+import ic.ast.UnaryOp;
+import ic.ast.UserType;
+import ic.ast.VariableLocation;
+import ic.ast.VirtualCall;
+import ic.ast.VirtualMethod;
 import ic.ast.Visitor;
-import ic.ast.expr.ArrayLocation;
-import ic.ast.expr.BinaryOp;
-import ic.ast.expr.Expression;
-import ic.ast.expr.Length;
-import ic.ast.expr.Literal;
-import ic.ast.expr.NewArray;
-import ic.ast.expr.NewClass;
-import ic.ast.expr.StaticCall;
-import ic.ast.expr.This;
-import ic.ast.expr.UnaryOp;
-import ic.ast.expr.VariableLocation;
-import ic.ast.expr.VirtualCall;
-import ic.ast.methods.LibraryMethod;
-import ic.ast.methods.Method;
-import ic.ast.methods.StaticMethod;
-import ic.ast.methods.VirtualMethod;
-import ic.ast.stmt.Assignment;
-import ic.ast.stmt.Break;
-import ic.ast.stmt.CallStatement;
-import ic.ast.stmt.Continue;
-import ic.ast.stmt.If;
-import ic.ast.stmt.LocalVariable;
-import ic.ast.stmt.Return;
-import ic.ast.stmt.Statement;
-import ic.ast.stmt.StatementsBlock;
-import ic.ast.stmt.While;
-import ic.ast.types.PrimitiveType;
-import ic.ast.types.UserType;
+import ic.ast.While;
 import ic.semanticCheck.ScopeNode.ScopeType;
 
 public class SymbolTableBuilder implements Visitor {
@@ -244,24 +249,25 @@ public class SymbolTableBuilder implements Visitor {
         
         currScope.addLocalVar(localVariable);
         localVariable.getType().accept(this);
-        if (localVariable.isInitialized())
-            localVariable.getInitialValue().accept(this);
+        if (localVariable.getInitValue() != null)
+            localVariable.getInitValue().accept(this);
             
         return null;
     }
 
     @Override
     public Object visit(VariableLocation location) {
-        location.scope = currScope;
-        return null;
+    	if (location.getLocation() == null) {
+    		location.scope = currScope;
+            return null;
+    	} else {
+    		location.scope = currScope;
+            location.getLocation().accept(this);
+            return null;
+    	}
+        
     }
 
-    @Override
-    public Object visit(RefField location) {
-        location.scope = currScope;
-        location.getObject().accept(this);
-        return null;
-    }
 
     @Override
     public Object visit(ArrayLocation location) {
@@ -284,8 +290,8 @@ public class SymbolTableBuilder implements Visitor {
     public Object visit(VirtualCall call) {
         call.scope = currScope;
         
-        if (call.hasExplicitObject()) 
-            call.getObject().accept(this);
+        if (call.isExternal()) 
+            call.getLocation().accept(this);
 
         for (Expression argument : call.getArguments())
             argument.accept(this);        
@@ -328,14 +334,20 @@ public class SymbolTableBuilder implements Visitor {
     }
 
     @Override
-    public Object visit(UnaryOp unaryOp) {
+    public Object visit(MathUnaryOp unaryOp) {
+        unaryOp.scope = currScope;
+        unaryOp.getOperand().accept(this);        
+        return null;
+    }
+    
+    public Object visit(LogicalUnaryOp unaryOp) {
         unaryOp.scope = currScope;
         unaryOp.getOperand().accept(this);        
         return null;
     }
 
     @Override
-    public Object visit(BinaryOp binaryOp) {
+    public Object visit(MathBinaryOp binaryOp) {
         binaryOp.scope = currScope;
         
         binaryOp.getFirstOperand().accept(this);
@@ -343,5 +355,21 @@ public class SymbolTableBuilder implements Visitor {
 
         return null;
     }
+    
+    @Override
+    public Object visit(LogicalBinaryOp binaryOp) {
+        binaryOp.scope = currScope;
+        
+        binaryOp.getFirstOperand().accept(this);
+        binaryOp.getSecondOperand().accept(this);        
+
+        return null;
+    }
+
+	@Override
+	public Object visit(ExpressionBlock expressionBlock) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

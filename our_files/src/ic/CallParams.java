@@ -2,7 +2,7 @@ package ic;
 
 import java.util.List;
 
-import ic.ast.expr.Expression;
+import ic.ast.Expression;
 
 public class CallParams {
 

@@ -2,11 +2,13 @@ package ic;
 
 import ic.ast.ASTNode;
 import ic.ast.PrettyPrinter;
+import ic.ast.Program;
 import ic.parser.Lexer;
 import ic.parser.LexicalError;
 import ic.parser.LibParser;
 import ic.parser.ParserException;
 import ic.parser.parser;
+import ic.semanticCheck.SymbolTableBuilder;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -19,7 +21,7 @@ public class Compiler {
     	parser pp;
     	LibParser lp;
     	Symbol result;
-    	ASTNode programNode, libraryProgramNode;
+    	ASTNode programNode = null, libraryProgramNode = null;
     	String LibraryFile;
     	try {
     		
@@ -43,6 +45,16 @@ public class Compiler {
               if (libraryProgramNode != null) 
                   System.out.println(libraryProgramNode.accept(new PrettyPrinter(LibraryFile)));
     		}
+    		
+    		// Add the Library AST to the list of class declarations
+    		if (libraryProgramNode != null) ((Program) programNode).addClass(((Program) libraryProgramNode).getClasses().get(0));
+    		
+    		System.out.println("added library class!");
+    		
+    		// Build the symbol table
+            SymbolTableBuilder stb = new SymbolTableBuilder();
+            programNode.accept(stb);
+            System.out.println("finita!");
     		
     	} catch (ParserException  | LexicalError e) {
     		System.out.println(e.getMessage());

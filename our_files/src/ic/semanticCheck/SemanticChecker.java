@@ -4,39 +4,43 @@ import java.util.Stack;
 
 import ic.DataTypes;
 import ic.ast.ASTNode;
+import ic.ast.ArrayLocation;
+import ic.ast.Assignment;
+import ic.ast.BinaryOp;
+import ic.ast.Break;
+import ic.ast.CallStatement;
+import ic.ast.Continue;
 import ic.ast.Field;
 import ic.ast.Formal;
 import ic.ast.ICClass;
+import ic.ast.If;
+import ic.ast.Length;
+import ic.ast.LibraryMethod;
+import ic.ast.Literal;
+import ic.ast.LocalVariable;
+import ic.ast.LogicalBinaryOp;
+import ic.ast.LogicalUnaryOp;
+import ic.ast.MathBinaryOp;
+import ic.ast.MathUnaryOp;
+import ic.ast.Method;
+import ic.ast.NewArray;
+import ic.ast.NewClass;
+import ic.ast.PrimitiveType;
 import ic.ast.Program;
+import ic.ast.Return;
+import ic.ast.Statement;
+import ic.ast.StatementsBlock;
+import ic.ast.StaticCall;
+import ic.ast.StaticMethod;
+import ic.ast.This;
+import ic.ast.Type;
+import ic.ast.UnaryOp;
+import ic.ast.UserType;
+import ic.ast.VariableLocation;
+import ic.ast.VirtualCall;
+import ic.ast.VirtualMethod;
 import ic.ast.Visitor;
-import ic.ast.expr.ArrayLocation;
-import ic.ast.expr.BinaryOp;
-import ic.ast.expr.Length;
-import ic.ast.expr.Literal;
-import ic.ast.expr.NewArray;
-import ic.ast.expr.NewClass;
-import ic.ast.expr.StaticCall;
-import ic.ast.expr.This;
-import ic.ast.expr.UnaryOp;
-import ic.ast.expr.VariableLocation;
-import ic.ast.expr.VirtualCall;
-import ic.ast.methods.LibraryMethod;
-import ic.ast.methods.Method;
-import ic.ast.methods.StaticMethod;
-import ic.ast.methods.VirtualMethod;
-import ic.ast.stmt.Assignment;
-import ic.ast.stmt.Break;
-import ic.ast.stmt.CallStatement;
-import ic.ast.stmt.Continue;
-import ic.ast.stmt.If;
-import ic.ast.stmt.LocalVariable;
-import ic.ast.stmt.Return;
-import ic.ast.stmt.Statement;
-import ic.ast.stmt.StatementsBlock;
-import ic.ast.stmt.While;
-import ic.ast.types.PrimitiveType;
-import ic.ast.types.Type;
-import ic.ast.types.UserType;
+import ic.ast.While;
 import ic.semanticCheck.ScopeNode.ScopeType;
 
 public class SemanticChecker implements Visitor {
@@ -282,8 +286,8 @@ public class SemanticChecker implements Visitor {
 	@Override
 	public Object visit(LocalVariable localVariable) {
 		// TODO Auto-generated method stub
-		if (localVariable.isInitialized()) {
-			Type init = (Type) localVariable.getInitialValue().accept(this);
+		if (localVariable.hasInitValue()) {
+			Type init = (Type) localVariable.getInitValue().accept(this);
 			if (init == null) {
 				return null;
 			}
@@ -294,33 +298,31 @@ public class SemanticChecker implements Visitor {
 
 	@Override
 	public Object visit(VariableLocation location) {
-		// TODO Auto-generated method stub
-		Object variable = location.scope.lookupId(location.getName());
-		if (variable == null) {
-			throw new SemanticException(location, location.getName()
-					+ " not found in symbol table");
-		} else if (variable instanceof Field) {
-			if (static_scope == true)
-				throw new SemanticException(location,
-						"Use of field inside static method is not allowed");
-			return ((Field) variable).getType();
-		}
+		if (location.getLocation() == null){
+			Object variable = location.scope.lookupId(location.getName());
+			if (variable == null) {
+				throw new SemanticException(location, location.getName()
+						+ " not found in symbol table");
+			} else if (variable instanceof Field) {
+				if (static_scope == true)
+					throw new SemanticException(location,
+							"Use of field inside static method is not allowed");
+				return ((Field) variable).getType();
+			}
 
-		return (Type) variable;
-	}
-
-	@Override
-	public Object visit(Field location) {
-		// TODO Auto-generated method stub
-		Type ctype = (Type) location.getObject().accept(this);
-		DeclClass c = (DeclClass) location.scope.lookupId(ctype
-				.getName());
-		DeclField field = c.scope.getField(location.getField());
-		if (field == null) {
-			throw new SemanticException(location, location.getField()
-					+ " doesn't exist in " + c.getName());
+			return (Type) variable;
+			
+		} else {
+			Type ctype = (Type) location.getLocation().accept(this);
+			ICClass c = (ICClass) location.scope.lookupId(ctype
+					.getName());
+			Field field = c.scope.getField(location.getName());
+			if (field == null) {
+				throw new SemanticException(location, location.getName()
+						+ " doesn't exist in " + c.getName());
+			}
+			return field.getType();
 		}
-		return field.getType();
 	}
 
 	@Override
@@ -347,16 +349,16 @@ public class SemanticChecker implements Visitor {
 			throw new SemanticException(call, call.getClassName()
 					+ " class doesn't exist");
 		}
-		Method method = ((ICClass) c).scope.getMethod(call.getMethod());
+		Method method = ((ICClass) c).scope.getMethod(call.getName());
 		if (method == null) {
-			throw new SemanticException(call, "Method " + call.getMethod()
+			throw new SemanticException(call, "Method " + call.getName()
 					+ " doesn't exist");
 		}
 		if (call.getArguments().size() != method.getFormals().size()) {
 			throw new SemanticException(call,
 					"Invalid number of arguments for "
 							+ ((ICClass) c).getName() + "."
-							+ call.getMethod());
+							+ call.getName());
 		}
 		if (method instanceof VirtualMethod)
 			throw new SemanticException(call, " called method isn't static");
@@ -372,14 +374,14 @@ public class SemanticChecker implements Visitor {
 					if (!isSubClass(classB.scope, classA.scope)) {
 						throw new SemanticException(call, "Method "
 								+ ((ICClass) c).getName() + "."
-								+ call.getMethod()
+								+ call.getName()
 								+ " is not applicable for the arguments given");
 					}
 				} else {
 
 					throw new SemanticException(call, "Method "
 							+ ((ICClass) c).getName() + "."
-							+ call.getMethod()
+							+ call.getName()
 							+ " is not applicable for the arguments given");
 				}
 			}
@@ -391,11 +393,11 @@ public class SemanticChecker implements Visitor {
 	public Object visit(VirtualCall call) {
 		Object m = null;
 		String class_name = null;
-		if (call.getObject() == null) {
-			m = call.scope.lookupId(call.getMethod());
+		if (call.getLocation() == null) {
+			m = call.scope.lookupId(call.getName());
 			class_name = lookupClassScopeName(call.scope);
 			if (m == null || !(m instanceof Method)) {
-				throw new SemanticException(call, call.getMethod()
+				throw new SemanticException(call, call.getName()
 						+ " not found in symbol table");
 			}
 			if (this.static_scope == true && m instanceof VirtualMethod) {
@@ -405,24 +407,24 @@ public class SemanticChecker implements Visitor {
 			}
 
 		} else {
-			Type class_type = (Type) call.getObject().accept(this);
+			Type class_type = (Type) call.getLocation().accept(this);
 			if (class_type instanceof PrimitiveType) {
 				throw new SemanticException(call,
 						" Primitive type has no methods");
 			}
 			Object c = call.scope.lookupId(class_type.getName());
-			m = ((ICClass) c).scope.lookupId(call.getMethod());
+			m = ((ICClass) c).scope.lookupId(call.getName());
 			class_name = ((ICClass) c).getName();
 			if (m == null || !(m instanceof Method)) {
 				throw new SemanticException(call, "Method " + class_name + "."
-						+ call.getMethod() + " not found in type table");
+						+ call.getName() + " not found in type table");
 			}
 
 		}
 		if (call.getArguments().size() != ((Method) m).getFormals().size()) {
 			throw new SemanticException(call,
 					"Invalid number of arguments for method "
-							+ call.getMethod());
+							+ call.getName());
 		}
 
 		for (int i = 0; i < call.getArguments().size(); i++) {
@@ -437,12 +439,12 @@ public class SemanticChecker implements Visitor {
 							.getName());
 					if (!isSubClass(classB.scope, classA.scope)) {
 						throw new SemanticException(call, "Method "
-								+ class_name + "." + call.getMethod()
+								+ class_name + "." + call.getName()
 								+ " is not applicable for the arguments given");
 					}
 				} else {
 					throw new SemanticException(call, "Method " + class_name
-							+ "." + call.getMethod()
+							+ "." + call.getName()
 							+ " is not applicable for the arguments given");
 				}
 			}
@@ -468,7 +470,7 @@ public class SemanticChecker implements Visitor {
 			throw new SemanticException(newClass, newClass.getName()
 					+ " not found in symbol table");
 		}
-		return new ClassType(newClass.getLine(), newClass.getName());
+		return new UserType(newClass.getLine(), newClass.getName());
 	}
 
 	@Override
@@ -485,7 +487,7 @@ public class SemanticChecker implements Visitor {
 	public Object visit(Length length) {
 		// TODO Auto-generated method stub
 		length.getArray().accept(this);
-		return new PrimitiveType(length.getLine(), DataType.INT);
+		return new PrimitiveType(length.getLine(), DataTypes.INT);
 	}
 
 	@Override
@@ -495,7 +497,7 @@ public class SemanticChecker implements Visitor {
 	}
 
 	@Override
-	public Object visit(UnaryOp unaryOp) {
+	public Object visit(MathUnaryOp unaryOp) {
 		// TODO Auto-generated method stub
 		Type operand = (Type) unaryOp.getOperand().accept(this);
 		switch (operand.getName()) {
@@ -504,6 +506,16 @@ public class SemanticChecker implements Visitor {
 				throw new SemanticException(unaryOp, " type mismatch");
 			}
 			return operand;
+		default:
+			throw new SemanticException(unaryOp, " type mismatch");
+		}
+	}
+	
+	@Override
+	public Object visit(LogicalUnaryOp unaryOp) {
+		// TODO Auto-generated method stub
+		Type operand = (Type) unaryOp.getOperand().accept(this);
+		switch (operand.getName()) {
 		case "boolean":
 			if (!unaryOp.getOperator().getDescription().equals("logical not")) {
 				throw new SemanticException(unaryOp, " type mismatch");
@@ -515,7 +527,7 @@ public class SemanticChecker implements Visitor {
 	}
 
 	@Override
-	public Object visit(BinaryOp binaryOp) {
+	public Object visit(MathBinaryOp binaryOp) {
 		Type a = (Type) binaryOp.getFirstOperand().accept(this);
 		Type b = (Type) binaryOp.getSecondOperand().accept(this);
 		switch (binaryOp.getOperator().getDescription()) {
@@ -543,6 +555,14 @@ public class SemanticChecker implements Visitor {
 						+ a.getName() + " " + binaryOp.getOperator()
 						+ " " + b.getName());
 			}
+		}
+		return null;
+	}
+	
+	public Object visit(LogicalBinaryOp binaryOp) {
+		Type a = (Type) binaryOp.getFirstOperand().accept(this);
+		Type b = (Type) binaryOp.getSecondOperand().accept(this);
+		switch (binaryOp.getOperator().getDescription()) {
 		case "logical and":
 		case "logical or":
 			if (a.getName().equals("boolean")
@@ -592,7 +612,7 @@ public class SemanticChecker implements Visitor {
 			}
 		}
 		return null;
-	}
+}
 
 	private String lookupClassScopeName(ScopeNode node) {
 		while (node.getType() != ScopeType.Class) {

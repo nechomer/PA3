@@ -1,6 +1,5 @@
 package ic.ast;
 
-import ic.ast.types.Type;
 
 /**
  * Class field AST node.

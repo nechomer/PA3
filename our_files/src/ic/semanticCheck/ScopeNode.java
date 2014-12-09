@@ -4,12 +4,12 @@ package ic.semanticCheck;
 import ic.ast.Field;
 import ic.ast.Formal;
 import ic.ast.ICClass;
-import ic.ast.methods.LibraryMethod;
-import ic.ast.methods.Method;
-import ic.ast.methods.StaticMethod;
-import ic.ast.methods.VirtualMethod;
-import ic.ast.stmt.LocalVariable;
-import ic.ast.types.Type;
+import ic.ast.LibraryMethod;
+import ic.ast.LocalVariable;
+import ic.ast.Method;
+import ic.ast.StaticMethod;
+import ic.ast.Type;
+import ic.ast.VirtualMethod;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;

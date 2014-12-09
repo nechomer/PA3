@@ -1,33 +1,5 @@
 package ic.ast;
 
-import ic.ast.expr.ArrayLocation;
-import ic.ast.expr.ExpressionBlock;
-import ic.ast.expr.Length;
-import ic.ast.expr.Literal;
-import ic.ast.expr.LogicalBinaryOp;
-import ic.ast.expr.LogicalUnaryOp;
-import ic.ast.expr.MathBinaryOp;
-import ic.ast.expr.MathUnaryOp;
-import ic.ast.expr.NewArray;
-import ic.ast.expr.NewClass;
-import ic.ast.expr.StaticCall;
-import ic.ast.expr.This;
-import ic.ast.expr.VariableLocation;
-import ic.ast.expr.VirtualCall;
-import ic.ast.methods.LibraryMethod;
-import ic.ast.methods.StaticMethod;
-import ic.ast.methods.VirtualMethod;
-import ic.ast.stmt.Assignment;
-import ic.ast.stmt.Break;
-import ic.ast.stmt.CallStatement;
-import ic.ast.stmt.Continue;
-import ic.ast.stmt.If;
-import ic.ast.stmt.LocalVariable;
-import ic.ast.stmt.Return;
-import ic.ast.stmt.StatementsBlock;
-import ic.ast.stmt.While;
-import ic.ast.types.PrimitiveType;
-import ic.ast.types.UserType;
 
 /**
  * AST visitor interface. Declares methods for visiting each type of AST node.

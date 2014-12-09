@@ -8,10 +8,6 @@ package ic.parser;
 import ic.*;
 import ic.parser.*;
 import ic.ast.*;
-import ic.ast.expr.*;
-import ic.ast.methods.*;
-import ic.ast.stmt.*;
-import ic.ast.types.*;
 import java_cup.runtime.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -778,7 +774,7 @@ public class parser extends java_cup.runtime.lr_parser {
 
 	//**********************BONUS*************************
 	private boolean isFaultyDecl(Statement s) {
-		if(s instanceof ic.ast.stmt.LocalVariable) return true;
+		if(s instanceof LocalVariable) return true;
 		return false;
 	}
 

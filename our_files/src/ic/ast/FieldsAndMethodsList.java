@@ -1,7 +1,5 @@
 package ic.ast;
 
-import ic.ast.methods.Method;
-
 import java.util.ArrayList;
 import java.util.List;
 

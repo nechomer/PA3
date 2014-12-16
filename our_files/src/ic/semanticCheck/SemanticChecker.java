@@ -20,6 +20,10 @@ public class SemanticChecker implements Visitor {
 		this.isLibrary = false;
 	}
 
+	/**
+	 * @param program
+	 * @return
+	 */
 	@Override
 	public Object visit(Program program) {
 		int main_cnt = 0;
@@ -58,6 +62,10 @@ public class SemanticChecker implements Visitor {
 		return null;
 	}
 
+	/**
+	 * @param icClass
+	 * @return
+	 */
 	@Override
 	public Object visit(ICClass icClass) {
 		for (Method m : icClass.getMethods()) {
@@ -70,6 +78,10 @@ public class SemanticChecker implements Visitor {
 		return null;
 	}
 
+	/**
+	 * @param field
+	 * @return
+	 */
 	@Override
 	public Object visit(Field field) {
 		if (field.getType() instanceof PrimitiveType) {
@@ -83,6 +95,10 @@ public class SemanticChecker implements Visitor {
 		return null;
 	}
 
+	/**
+	 * @param method
+	 * @return
+	 */
 	@Override
 	public Object visit(VirtualMethod method) {
 		this.static_scope = false;
@@ -102,6 +118,10 @@ public class SemanticChecker implements Visitor {
 		return null;
 	}
 
+	/**
+	 * @param method
+	 * @return
+	 */
 	@Override
 	public Object visit(StaticMethod method) {
 		this.static_scope = true;
@@ -113,6 +133,14 @@ public class SemanticChecker implements Visitor {
 		return null;
 	}
 
+	/**
+	 * This function is intended for library method checking - Verifies all parameters 
+	 * in the method declaration are predefined or primitive. Since library methods return a
+	 * primitive/void, the return type isn't checks since it was verified by the parser.
+	 * 
+	 * @param method - A library method to be checked
+	 * @return - null
+	 */
 	@Override
 	public Object visit(LibraryMethod method) {
 		if (!this.isLibrary) {
@@ -121,28 +149,45 @@ public class SemanticChecker implements Visitor {
 		}
 		this.static_scope = true;
 		this.currMethodType = method.getType();
-		for (Statement s : method.getStatements()) {
-			s.accept(this);
-		}
+		//TODO: Check if necessary!!!
+//		for (Statement s : method.getStatements()) {
+//			s.accept(this);
+//		}
 		checkParams(method);
 		return null;
 	}
 
+	/**
+	 * @param formal
+	 * @return
+	 */
 	@Override
 	public Object visit(Formal formal) {
 		return formal.getType();
 	}
 
+	/**
+	 * @param type
+	 * @return
+	 */
 	@Override
 	public Object visit(PrimitiveType type) {
 		return type;
 	}
 
+	/**
+	 * @param type
+	 * @return
+	 */
 	@Override
 	public Object visit(UserType type) {
 		return type;
 	}
 
+	/**
+	 * @param assignment
+	 * @return
+	 */
 	@Override
 	public Object visit(Assignment assignment) {
 		Type a = (Type) assignment.getVariable().accept(this);
@@ -153,12 +198,20 @@ public class SemanticChecker implements Visitor {
 		return a;
 	}
 
+	/**
+	 * @param callStatement
+	 * @return
+	 */
 	@Override
 	public Object visit(CallStatement callStatement) {
 		return callStatement.getCall().accept(this);
 
 	}
 
+	/**
+	 * @param returnStatement
+	 * @return
+	 */
 	@Override
 	public Object visit(Return returnStatement) {
 		// TODO compare return type and method type
@@ -185,6 +238,10 @@ public class SemanticChecker implements Visitor {
 		}
 	}
 
+	/**
+	 * @param ifStatement
+	 * @return
+	 */
 	@Override
 	public Object visit(If ifStatement) {
 		// TODO check that every branch has return!
@@ -202,6 +259,10 @@ public class SemanticChecker implements Visitor {
 		return null;
 	}
 
+	/**
+	 * @param whileStatement
+	 * @return
+	 */
 	@Override
 	public Object visit(While whileStatement) {
 		Type cond = (Type) whileStatement.getCondition().accept(this);
@@ -220,6 +281,10 @@ public class SemanticChecker implements Visitor {
 		return null;
 	}
 
+	/**
+	 * @param breakStatement
+	 * @return
+	 */
 	@Override
 	public Object visit(Break breakStatement) {
 		// TODO Auto-generated method stub
@@ -229,6 +294,10 @@ public class SemanticChecker implements Visitor {
 		return null;
 	}
 
+	/**
+	 * @param continueStatement
+	 * @return
+	 */
 	@Override
 	public Object visit(Continue continueStatement) {
 		// TODO Auto-generated method stub
@@ -238,6 +307,10 @@ public class SemanticChecker implements Visitor {
 		return null;
 	}
 
+	/**
+	 * @param statementsBlock
+	 * @return
+	 */
 	@Override
 	public Object visit(StatementsBlock statementsBlock) {
 		// TODO Auto-generated method stub
@@ -247,6 +320,10 @@ public class SemanticChecker implements Visitor {
 		return null;
 	}
 
+	/**
+	 * @param localVariable
+	 * @return
+	 */
 	@Override
 	public Object visit(LocalVariable localVariable) {
 		// TODO Auto-generated method stub
@@ -260,6 +337,10 @@ public class SemanticChecker implements Visitor {
 		return localVariable.getType();
 	}
 
+	/**
+	 * @param location
+	 * @return
+	 */
 	@Override
 	public Object visit(VariableLocation location) {
 		if (location.getLocation() == null){
@@ -289,6 +370,10 @@ public class SemanticChecker implements Visitor {
 		}
 	}
 
+	/**
+	 * @param location
+	 * @return
+	 */
 	@Override
 	public Object visit(ArrayLocation location) {
 		// TODO Auto-generated method stub
@@ -305,31 +390,44 @@ public class SemanticChecker implements Visitor {
 		return location.getArray().accept(this);
 	}
 
+	/**
+	 * @param call
+	 * @return
+	 */
 	@Override
 	public Object visit(StaticCall call) {
 
 		Object c = call.scope.lookupId(call.getClassName());
+		//Static calls have to be in a form of "<class>."
 		if (!(c instanceof ICClass)) {
 			throw new SemanticException(call, call.getClassName()
 					+ " class doesn't exist");
 		}
+		//The method called has to be predefined in the class, so it looks for it
 		Method method = ((ICClass) c).scope.getMethod(call.getName());
 		if (method == null) {
 			throw new SemanticException(call, "Method " + call.getName()
 					+ " doesn't exist");
 		}
+		//The static method has to contain the same number of parameters as the call
 		if (call.getArguments().size() != method.getFormals().size()) {
 			throw new SemanticException(call,
 					"Invalid number of arguments for "
 							+ ((ICClass) c).getName() + "."
 							+ call.getName());
 		}
+		//The method called has to be static as well..
 		if (method instanceof VirtualMethod)
 			throw new SemanticException(call, " called method isn't static");
+		
+		//Iterate over the method calling arguments, 
+		//compare the method arguments predefined accordingly
 		for (int i = 0; i < call.getArguments().size(); i++) {
 			Type t = (Type) call.getArguments().get(i).accept(this);
 			Type formal = method.getFormals().get(i).getType();
 			if (!t.getName().equals(formal.getName())) {
+				//formals aren't of the same type, it can still be valid
+				//if the called argument is a sub class of the defined argument 
 				if (formal instanceof UserType && t instanceof UserType) {
 					ICClass classA = (ICClass) call.scope.lookupId(t
 							.getName());
@@ -353,6 +451,10 @@ public class SemanticChecker implements Visitor {
 		return method.getType();
 	}
 
+	/**
+	 * @param call
+	 * @return
+	 */
 	@Override
 	public Object visit(VirtualCall call) {
 		Object m = null;
@@ -416,6 +518,10 @@ public class SemanticChecker implements Visitor {
 		return ((Method) m).getType();
 	}
 
+	/**
+	 * @param thisExpression
+	 * @return
+	 */
 	@Override
 	public Object visit(This thisExpression) {
 		if (this.static_scope == true) {
@@ -426,6 +532,10 @@ public class SemanticChecker implements Visitor {
 				lookupClassScopeName(thisExpression.scope));
 	}
 
+	/**
+	 * @param newClass
+	 * @return
+	 */
 	@Override
 	public Object visit(NewClass newClass) {
 		// TODO Auto-generated method stub
@@ -437,6 +547,10 @@ public class SemanticChecker implements Visitor {
 		return new UserType(newClass.getLine(), newClass.getName());
 	}
 
+	/**
+	 * @param newArray
+	 * @return
+	 */
 	@Override
 	public Object visit(NewArray newArray) {
 		// TODO Auto-generated method stub
@@ -447,6 +561,10 @@ public class SemanticChecker implements Visitor {
 		return newArray.getType();
 	}
 
+	/**
+	 * @param length
+	 * @return
+	 */
 	@Override
 	public Object visit(Length length) {
 		// TODO Auto-generated method stub
@@ -454,6 +572,10 @@ public class SemanticChecker implements Visitor {
 		return new PrimitiveType(length.getLine(), DataTypes.INT);
 	}
 
+	/**
+	 * @param literal
+	 * @return
+	 */
 	@Override
 	public Object visit(Literal literal) {
 		// TODO Auto-generated method stub
@@ -472,6 +594,10 @@ public class SemanticChecker implements Visitor {
 		return ret;
 	}
 
+	/**
+	 * @param unaryOp
+	 * @return
+	 */
 	@Override
 	public Object visit(MathUnaryOp unaryOp) {
 		// TODO Auto-generated method stub
@@ -487,6 +613,10 @@ public class SemanticChecker implements Visitor {
 		}
 	}
 	
+	/**
+	 * @param unaryOp
+	 * @return
+	 */
 	@Override
 	public Object visit(LogicalUnaryOp unaryOp) {
 		// TODO Auto-generated method stub
@@ -502,6 +632,10 @@ public class SemanticChecker implements Visitor {
 		}
 	}
 
+	/**
+	 * @param binaryOp
+	 * @return
+	 */
 	@Override
 	public Object visit(MathBinaryOp binaryOp) {
 		Type a = (Type) binaryOp.getFirstOperand().accept(this);
@@ -535,6 +669,10 @@ public class SemanticChecker implements Visitor {
 		return null;
 	}
 	
+	/**
+	 * @param binaryOp
+	 * @return
+	 */
 	public Object visit(LogicalBinaryOp binaryOp) {
 		Type a = (Type) binaryOp.getFirstOperand().accept(this);
 		Type b = (Type) binaryOp.getSecondOperand().accept(this);
@@ -590,6 +728,10 @@ public class SemanticChecker implements Visitor {
 		return null;
 }
 
+	/**
+	 * @param node
+	 * @return
+	 */
 	private String lookupClassScopeName(ScopeNode node) {
 		while (node.getType() != ScopeType.Class) {
 			node = node.getParent();
@@ -598,6 +740,11 @@ public class SemanticChecker implements Visitor {
 
 	}
 
+	/**
+	 * @param classA
+	 * @param subClassA
+	 * @return Whether subClassA is indeed a subclass of A
+	 */
 	private boolean isSubClass(ScopeNode classA, ScopeNode subClassA) {
 		if (classA.getName().equals(subClassA.getName()))
 			return true;
@@ -613,11 +760,16 @@ public class SemanticChecker implements Visitor {
 		return false;
 	}
 
+	/**
+	 * @param method
+	 */
 	private void checkParams(Method method) {
 		for (Formal f : method.getFormals()) {
+			//If it is a primitive type - The checker knows the type and moves on
 			if (f.getType() instanceof PrimitiveType) {
 				continue;
 			}
+			//Not a primitive type - Checks whether the type has been declared in table
 			Object c = method.scope.lookupId(f.getType().getName());
 			if (c == null) {
 				throw new SemanticException(method, f.getType()
@@ -626,22 +778,31 @@ public class SemanticChecker implements Visitor {
 		}
 	}
 
+	/**Checks whether the assignment is legitimate in terms of type checking
+	 * @param a
+	 * @param b
+	 * @param assignment
+	 */
 	private void checkAssignment(Type a, Type b, ASTNode assignment) {
-		if (!a.getName().equals(b.getName())) {
-			if (a instanceof UserType && b instanceof UserType) {
+		if (!a.getName().equals(b.getName())) {//If a and b are not of the same type
+			if (a instanceof UserType && b instanceof UserType) {//Both are user-defined types, in case of an inherited class assignment
 				ICClass classA = (ICClass) assignment.scope.lookupId(a
 						.getName());
 				ICClass classB = (ICClass) assignment.scope.lookupId(b
 						.getName());
 				if (isSubClass(classA.scope, classB.scope)) {
-					return;
+					return;//If a is a subclass of b - Checking is valid
 				}
 			} else if (a instanceof UserType && b instanceof PrimitiveType) {
-				if (b.getName().equals("void")) {
+				if (b.getName().equals("void")) {//b is null, so it can be assigned to a user-defined type
 					return;
 				}
 			} else if (a instanceof PrimitiveType && a.getDimension() > 0) {
-				if (b.getName().equals("void")) {
+				if (b.getName().equals("void")) {//a is a primitive array - null can be assigned to it
+					return;
+				}
+			} else if (a instanceof PrimitiveType && a.getName().equals("string")) {
+				if (b.getName().equals("void")) {//a is a string - null can be assigned to it
 					return;
 				}
 			}
@@ -652,6 +813,10 @@ public class SemanticChecker implements Visitor {
 
 	}
 
+	/**
+	 * @param expressionBlock
+	 * @return
+	 */
 	@Override
 	public Object visit(ExpressionBlock expressionBlock) {
 		// TODO Auto-generated method stub

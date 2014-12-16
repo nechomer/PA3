@@ -33,12 +33,14 @@ class A {
 class B extends A {
     int j;
 
-    void vfunc(A a, int max, int val) {
+    static void vfunc(A a, int max, int val) {
     }
 }
 
 class C {
   static void main(string[] args) {
     A[][] a;
+	A aa;
+	B.vfunc(null, 5, 5);
   }
 }

@@ -14,6 +14,7 @@ import java_cup.runtime.Symbol;
 public class Compiler {
     public static void main(String[] args)
     {
+    	StringBuilder sb = new StringBuilder();
     	parser pp;
     	LibParser lp;
     	Symbol result;
@@ -50,15 +51,19 @@ public class Compiler {
     		// Build the symbol table
             SymbolTableBuilder stb = new SymbolTableBuilder();
             programNode.accept(stb);
-            System.out.println("finita!");
+            System.out.println("finished building Symbol Table!");
             
-         // Print the symbol table
+			// Run semantic checks
+			SemanticChecker sck = new SemanticChecker();
+			programNode.accept(sck);
+			
+			// Print the symbol table
             System.out.println();
             printSymbolTable(stb.getRootScope());
     		
-    	} catch (ParserException  | LexicalError e) {
+    	} catch (ParserException | SemanticException | LexicalError e) {
     		System.out.println(e.getMessage());
-    		System.exit(1);
+    		//System.exit(1);
     	} catch (IOException e) {
     		System.err.printf("IO Error:\n%s\n", e.getMessage());
     	} catch (Exception e) {

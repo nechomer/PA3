@@ -240,7 +240,7 @@ public class SemanticChecker implements Visitor {
 
 	/**
 	 * @param ifStatement
-	 * @return
+	 * @return null
 	 */
 	@Override
 	public Object visit(If ifStatement) {
@@ -250,6 +250,7 @@ public class SemanticChecker implements Visitor {
 			throw new SemanticException(ifStatement,
 					"Non boolean condition for if statement");
 		}
+		//In case there are many if statments in a raw, we need to know which if scope is handled
 		this.cond_block.push(true);
 		ifStatement.getOperation().accept(this);
 		this.cond_block.pop();
@@ -343,12 +344,14 @@ public class SemanticChecker implements Visitor {
 	 */
 	@Override
 	public Object visit(VariableLocation location) {
+		//The variable reference is of the type <var>, it's not a class field
 		if (location.getLocation() == null){
 			Object variable = location.scope.lookupId(location.getName());
 			if (variable == null) {
 				throw new SemanticException(location, location.getName()
 						+ " not found in symbol table");
 			} else if (variable instanceof Field) {
+				//If the variable is defined as a field in a static scope - We get an error
 				if (static_scope == true)
 					throw new SemanticException(location,
 							"Use of field inside static method is not allowed");
@@ -358,9 +361,11 @@ public class SemanticChecker implements Visitor {
 			return (Type) variable;
 			
 		} else {
+			//The variable is a class, so it is looked up
 			Type ctype = (Type) location.getLocation().accept(this);
 			ICClass c = (ICClass) location.scope.lookupId(ctype
 					.getName());
+			//Look up the field defention in the class
 			Field field = c.scope.getField(location.getName());
 			if (field == null) {
 				throw new SemanticException(location, location.getName()
@@ -392,7 +397,7 @@ public class SemanticChecker implements Visitor {
 
 	/**
 	 * @param call
-	 * @return
+	 * @return the method call return type if successfull
 	 */
 	@Override
 	public Object visit(StaticCall call) {
@@ -439,12 +444,14 @@ public class SemanticChecker implements Visitor {
 								+ call.getName()
 								+ " is not applicable for the arguments given");
 					}
-				} else {
-
+				//In case this is not a call of an inherited argument,
+				//It may have been a null reference call for a user-defined type or string
+				} else if (((formal instanceof UserType) || formal.getName().equals("string")) &&
+						!t.getName().equals("void")) {
 					throw new SemanticException(call, "Method "
-							+ ((ICClass) c).getName() + "."
-							+ call.getName()
-							+ " is not applicable for the arguments given");
+								+ ((ICClass) c).getName() + "."
+								+ call.getName()
+								+ " is not applicable for the arguments given");
 				}
 			}
 		}
@@ -453,19 +460,23 @@ public class SemanticChecker implements Visitor {
 
 	/**
 	 * @param call
-	 * @return
+	 * @return the method return type if successful
 	 */
 	@Override
 	public Object visit(VirtualCall call) {
 		Object m = null;
 		String class_name = null;
+		//The calling is not of the format "<exp>."
 		if (call.getLocation() == null) {
+			//Look for the method definition in its class
 			m = call.scope.lookupId(call.getName());
+			//Look for the name of the class the method is defined in
 			class_name = lookupClassScopeName(call.scope);
 			if (m == null || !(m instanceof Method)) {
 				throw new SemanticException(call, call.getName()
 						+ " not found in symbol table");
 			}
+			//can't call a virtual method in a static scope
 			if (this.static_scope == true && m instanceof VirtualMethod) {
 
 				throw new SemanticException(call,
@@ -473,13 +484,17 @@ public class SemanticChecker implements Visitor {
 			}
 
 		} else {
+			//Classify the class ID of the called method (before the ".")
 			Type class_type = (Type) call.getLocation().accept(this);
+			//Primitive type isn't a class - Can't call a method with "." 
 			if (class_type instanceof PrimitiveType) {
 				throw new SemanticException(call,
 						" Primitive type has no methods");
 			}
+			//Look for the class's method in the class's table
 			Object c = call.scope.lookupId(class_type.getName());
 			m = ((ICClass) c).scope.lookupId(call.getName());
+			//Get the instance's class name
 			class_name = ((ICClass) c).getName();
 			if (m == null || !(m instanceof Method)) {
 				throw new SemanticException(call, "Method " + class_name + "."
@@ -487,12 +502,14 @@ public class SemanticChecker implements Visitor {
 			}
 
 		}
+		//Checks the calling and the definition have the same amount of arguments
 		if (call.getArguments().size() != ((Method) m).getFormals().size()) {
 			throw new SemanticException(call,
 					"Invalid number of arguments for method "
 							+ call.getName());
 		}
-
+		
+		//Iterates over the arguments - Compares each of them typewise: See static call doc
 		for (int i = 0; i < call.getArguments().size(); i++) {
 			Type t = (Type) call.getArguments().get(i).accept(this);
 			Type formal = ((Method) m).getFormals().get(i).getType();
@@ -508,7 +525,8 @@ public class SemanticChecker implements Visitor {
 								+ class_name + "." + call.getName()
 								+ " is not applicable for the arguments given");
 					}
-				} else {
+				} else if (((formal instanceof UserType) || formal.getName().equals("string")) &&
+						!t.getName().equals("void")) {
 					throw new SemanticException(call, "Method " + class_name
 							+ "." + call.getName()
 							+ " is not applicable for the arguments given");
@@ -809,6 +827,11 @@ public class SemanticChecker implements Visitor {
 			throw new SemanticException(assignment,
 					"Invalid assignment of type " + b.getName()
 							+ " to variable of type " + a.getName());
+//TODO		} else if (a.getDimension() != b.getDimension()) {
+//			//Same types, but if dimensions are different it's still an error 
+//			throw new SemanticException(assignment,
+//					"Invalid assignment of type " + b.getName() + " with " + a.getDimension() +" dimensions"
+//							+ " to variable of type " + a.getName()+ " with " + b.getDimension() +" dimensions");
 		}
 
 	}

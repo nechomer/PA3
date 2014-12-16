@@ -41,6 +41,6 @@ class C {
   static void main(string[] args) {
     A[][] a;
 	A aa;
-	B.vfunc(null, 5, 5);
+	B.vfunc(null,5,5);
   }
 }

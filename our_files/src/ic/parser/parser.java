@@ -757,12 +757,18 @@ public class parser extends java_cup.runtime.lr_parser {
 	public void syntax_error(Symbol s) {
 		
 		Token tok = (Token) s;
+		StringBuilder sb;
 		List<Integer> validToken = expected_token_ids();
 		if(validToken.size() > 0) {
+			sb = new StringBuilder();
+			sb.append("Line " + tok.getLine()+": Syntax error; expected ");
 			for(int i=0;i<validToken.size();i++) {
 				String exps = symbol_name_from_id(validToken.get(i));
-				System.out.println("Line " + tok.getLine()+": Syntax error; expected " + exps);
+				sb.append(exps + " , ");
+				
 			}
+			sb.append("but found " + tok);
+			System.out.println(sb);
 		}
 		else
 			System.out.println("Line " + tok.getLine()+": Syntax error; unexpected " + tok);

@@ -3,44 +3,8 @@ package ic.semanticCheck;
 import java.util.Stack;
 
 import ic.DataTypes;
-import ic.ast.ASTNode;
-import ic.ast.ArrayLocation;
-import ic.ast.Assignment;
-import ic.ast.BinaryOp;
-import ic.ast.Break;
-import ic.ast.CallStatement;
-import ic.ast.Continue;
-import ic.ast.Field;
-import ic.ast.Formal;
-import ic.ast.ICClass;
-import ic.ast.If;
-import ic.ast.Length;
-import ic.ast.LibraryMethod;
-import ic.ast.Literal;
-import ic.ast.LocalVariable;
-import ic.ast.LogicalBinaryOp;
-import ic.ast.LogicalUnaryOp;
-import ic.ast.MathBinaryOp;
-import ic.ast.MathUnaryOp;
-import ic.ast.Method;
-import ic.ast.NewArray;
-import ic.ast.NewClass;
-import ic.ast.PrimitiveType;
-import ic.ast.Program;
-import ic.ast.Return;
-import ic.ast.Statement;
-import ic.ast.StatementsBlock;
-import ic.ast.StaticCall;
-import ic.ast.StaticMethod;
-import ic.ast.This;
-import ic.ast.Type;
-import ic.ast.UnaryOp;
-import ic.ast.UserType;
-import ic.ast.VariableLocation;
-import ic.ast.VirtualCall;
-import ic.ast.VirtualMethod;
-import ic.ast.Visitor;
-import ic.ast.While;
+import ic.LiteralTypes;
+import ic.ast.*;
 import ic.semanticCheck.ScopeNode.ScopeType;
 
 public class SemanticChecker implements Visitor {
@@ -493,7 +457,19 @@ public class SemanticChecker implements Visitor {
 	@Override
 	public Object visit(Literal literal) {
 		// TODO Auto-generated method stub
-		return new PrimitiveType(literal.getLine(), literal.getType());
+		LiteralTypes literalType = literal.getType();
+		PrimitiveType ret = null;
+		switch(literalType.getDescription()) {
+			case ("Boolean literal") : ret = new PrimitiveType(literal.getLine(), DataTypes.BOOLEAN);
+				break;
+			case ("Integer literal") : ret = new PrimitiveType(literal.getLine(), DataTypes.INT);
+				break;
+			case ("String literal") : ret = new PrimitiveType(literal.getLine(), DataTypes.STRING);
+				break;
+			case ("Literal") : ret = new PrimitiveType(literal.getLine(), DataTypes.VOID);
+				break;	
+		}
+		return ret;
 	}
 
 	@Override
@@ -502,7 +478,7 @@ public class SemanticChecker implements Visitor {
 		Type operand = (Type) unaryOp.getOperand().accept(this);
 		switch (operand.getName()) {
 		case "int":
-			if (!unaryOp.getOperator().getDescription().equals("negate")) {
+			if (!unaryOp.getOperator().getDescription().equals("unary subtraction")) {
 				throw new SemanticException(unaryOp, " type mismatch");
 			}
 			return operand;
@@ -517,7 +493,7 @@ public class SemanticChecker implements Visitor {
 		Type operand = (Type) unaryOp.getOperand().accept(this);
 		switch (operand.getName()) {
 		case "boolean":
-			if (!unaryOp.getOperator().getDescription().equals("logical not")) {
+			if (!unaryOp.getOperator().getDescription().equals("logical negation")) {
 				throw new SemanticException(unaryOp, " type mismatch");
 			}
 			return operand;
@@ -531,7 +507,7 @@ public class SemanticChecker implements Visitor {
 		Type a = (Type) binaryOp.getFirstOperand().accept(this);
 		Type b = (Type) binaryOp.getSecondOperand().accept(this);
 		switch (binaryOp.getOperator().getDescription()) {
-		case "add":
+		case "addition":
 			if (a.getName().equals("int")
 					&& b.getName().equals("int")) {
 				return a;
@@ -543,9 +519,9 @@ public class SemanticChecker implements Visitor {
 						+ a.getName() + " " + binaryOp.getOperator()
 						+ " " + b.getName());
 			}
-		case "subtract":
-		case "multiply":
-		case "divide":
+		case "subtraction":
+		case "multiplication":
+		case "division":
 		case "modulo":
 			if (a.getName().equals("int")
 					&& b.getName().equals("int")) {
@@ -586,8 +562,8 @@ public class SemanticChecker implements Visitor {
 						"Invalid logical binary op (" + binaryOp.getOperator()
 								+ ") on non-integer expression");
 			}
-		case "equals":
-		case "not equals":
+		case "equality":
+		case "inequality":
 			if (a.getName().equals(b.getName())) {
 				return new PrimitiveType(binaryOp.getLine(), DataTypes.BOOLEAN);
 			} else if ((a.getName().equals("void") && b instanceof UserType)
@@ -674,6 +650,12 @@ public class SemanticChecker implements Visitor {
 							+ " to variable of type " + a.getName());
 		}
 
+	}
+
+	@Override
+	public Object visit(ExpressionBlock expressionBlock) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

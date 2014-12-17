@@ -20,6 +20,7 @@ class A {
   void vfunc(A a, int max, int val) {
     int[] arr = new int[max];
     int i = 0;
+    str = vfunc(new A(), 1, 2);
     while (i < max){
         arr[i] = val;
         i = i + 1;

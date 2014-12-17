@@ -11,12 +11,12 @@ public class SemanticChecker implements Visitor {
 
 	// TODO comment on fields
 	private boolean static_scope, hasReturn, isLibrary;
-	private Stack<Boolean> loop;
+	private Stack<Boolean> loop, cond_block;
 	private Type currMethodType;
-
 
 	public SemanticChecker() {
 		loop = new Stack<>();
+		cond_block = new Stack<>();
 		this.isLibrary = false;
 	}
 
@@ -115,7 +115,6 @@ public class SemanticChecker implements Visitor {
 			throw new SemanticException(method,
 					" no return statement in non void method");
 		}
-
 		return null;
 	}
 
@@ -139,7 +138,6 @@ public class SemanticChecker implements Visitor {
 			throw new SemanticException(method,
 					" no return statement in non void method");
 		}
-
 		return null;
 	}
 
@@ -228,7 +226,8 @@ public class SemanticChecker implements Visitor {
 		if (returnStatement.hasValue()) {
 			Type t = (Type) returnStatement.getValue().accept(this);
 			if (this.currMethodType.getName().equals(t.getName())) {
-				this.hasReturn = true;
+				if (this.cond_block.empty() || this.cond_block.peek().booleanValue())
+					this.hasReturn = true;
 				return this.currMethodType;
 			} else
 				throw new SemanticException(returnStatement,
@@ -236,7 +235,8 @@ public class SemanticChecker implements Visitor {
 								+ this.currMethodType.getName());
 		} else {
 			if (this.currMethodType.getName().equals("void")) {
-				this.hasReturn = true;
+				if (this.cond_block.empty() || this.cond_block.peek().booleanValue())
+					this.hasReturn = true;
 				return this.currMethodType;
 			} else
 				throw new SemanticException(returnStatement,
@@ -253,36 +253,18 @@ public class SemanticChecker implements Visitor {
 	@Override
 	public Object visit(If ifStatement) {
 		// TODO check that every branch has return!
-		boolean operationHasReturn = false;
-		boolean elseOperationHasReturn = false;
-		boolean hasReturnBefore;
-
-		hasReturnBefore = hasReturn;
-		hasReturn = false;
 		Type cond = (Type) ifStatement.getCondition().accept(this);
 		if (!cond.getName().equals("boolean")) {
 			throw new SemanticException(ifStatement,
 					"Non boolean condition for if statement");
 		}
 		//In case there are many if statments in a raw, we need to know which if scope is handled
+		this.cond_block.push(true);
 		ifStatement.getOperation().accept(this);
-		if(hasReturn) operationHasReturn = true;
-		hasReturn=false;
-		
+		this.cond_block.pop();
 		if (ifStatement.hasElse()) {
 			ifStatement.getElseOperation().accept(this);
-			if(hasReturn) elseOperationHasReturn = true;
-		} else {
-			elseOperationHasReturn = true;
 		}
-		
-		
-		if (operationHasReturn && elseOperationHasReturn){//all paths from here has return
-			hasReturn = true;
-		} else {
-			hasReturn = hasReturnBefore;
-		}
-		
 		return null;
 	}
 

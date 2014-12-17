@@ -184,10 +184,14 @@ public class LibParser extends java_cup.runtime.lr_parser {
 				sb.append(exps + " , ");
 			}
 			sb.append("but found " + tok);
-			System.out.println(sb);
+			report_fatal_error(sb.toString(), null);
 		}
 		else
-			System.out.println("Line " + tok.getLine()+": Syntax error; unexpected " + tok);
+			report_fatal_error("Line " + tok.getLine()+": Syntax error; unexpected " + tok, null);
+	}
+
+	public void report_fatal_error(String message, Object info){
+		throw new ParserException(message);
 	}
 
 

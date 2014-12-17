@@ -758,20 +758,25 @@ public class parser extends java_cup.runtime.lr_parser {
 		
 		Token tok = (Token) s;
 		StringBuilder sb;
+		String exps = "";
 		List<Integer> validToken = expected_token_ids();
 		if(validToken.size() > 0) {
 			sb = new StringBuilder();
 			sb.append("Line " + tok.getLine()+": Syntax error; expected ");
 			for(int i=0;i<validToken.size();i++) {
-				String exps = symbol_name_from_id(validToken.get(i));
+				exps = symbol_name_from_id(validToken.get(i));
 				sb.append(exps + " , ");
 				
 			}
 			sb.append("but found " + tok);
-			System.out.println(sb);
+			report_fatal_error(sb.toString(), null);
 		}
 		else
-			System.out.println("Line " + tok.getLine()+": Syntax error; unexpected " + tok);
+			report_fatal_error("Line " + tok.getLine()+": Syntax error; unexpected " + tok, null);
+	}
+
+	public void report_fatal_error(String message, Object info){
+		throw new ParserException(message);
 	}
 
 	private void printGrammar(String str) {

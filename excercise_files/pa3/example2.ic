@@ -34,12 +34,10 @@ class B extends A {
 
     void vfunc(A a, int max, int val) {
     }
-    static void omer(A rr){}
 }
 
 class C {
   static void main(string[] args) {
     A[][] a;
-    B.omer(null);
   }
 }

@@ -174,12 +174,17 @@ public class LibParser extends java_cup.runtime.lr_parser {
 	public void syntax_error(Symbol s) {
 		
 		Token tok = (Token) s;
+		StringBuilder sb;
 		List<Integer> validToken = expected_token_ids();
 		if(validToken.size() > 0) {
+			sb = new StringBuilder();
+			sb.append("Line " + tok.getLine()+": Syntax error; expected ");
 			for(i=0;i<validToken.size();i++) {
 				exps = symbol_name_from_id(validToken.get(i));
-				System.out.println("Line " + tok.getLine()+": Syntax error; expected " + exps);
+				sb.append(exps + " , ");
 			}
+			sb.append("but found " + tok);
+			System.out.println(sb);
 		}
 		else
 			System.out.println("Line " + tok.getLine()+": Syntax error; unexpected " + tok);
@@ -269,7 +274,7 @@ class CUP$LibParser$actions {
               List<Method> RESULT =null;
 		int smleft = ((java_cup.runtime.Symbol)CUP$LibParser$stack.peek()).left;
 		int smright = ((java_cup.runtime.Symbol)CUP$LibParser$stack.peek()).right;
-		StaticMethod sm = (StaticMethod)((java_cup.runtime.Symbol) CUP$LibParser$stack.peek()).value;
+		LibraryMethod sm = (LibraryMethod)((java_cup.runtime.Symbol) CUP$LibParser$stack.peek()).value;
 		 List<Method> mb = new ArrayList<Method>(); mb.add(sm); RESULT = mb; 
               CUP$LibParser$result = parser.getSymbolFactory().newSymbol("method_block",3, ((java_cup.runtime.Symbol)CUP$LibParser$stack.peek()), ((java_cup.runtime.Symbol)CUP$LibParser$stack.peek()), RESULT);
             }
@@ -284,7 +289,7 @@ class CUP$LibParser$actions {
 		List<Method> mb = (List<Method>)((java_cup.runtime.Symbol) CUP$LibParser$stack.elementAt(CUP$LibParser$top-1)).value;
 		int smleft = ((java_cup.runtime.Symbol)CUP$LibParser$stack.peek()).left;
 		int smright = ((java_cup.runtime.Symbol)CUP$LibParser$stack.peek()).right;
-		StaticMethod sm = (StaticMethod)((java_cup.runtime.Symbol) CUP$LibParser$stack.peek()).value;
+		LibraryMethod sm = (LibraryMethod)((java_cup.runtime.Symbol) CUP$LibParser$stack.peek()).value;
 		 mb.add(sm); RESULT = mb; 
               CUP$LibParser$result = parser.getSymbolFactory().newSymbol("method_block",3, ((java_cup.runtime.Symbol)CUP$LibParser$stack.elementAt(CUP$LibParser$top-1)), ((java_cup.runtime.Symbol)CUP$LibParser$stack.peek()), RESULT);
             }
@@ -293,14 +298,14 @@ class CUP$LibParser$actions {
           /*. . . . . . . . . . . . . . . . . . . .*/
           case 6: // stmethod ::= STATIC methodType IDENTIFIER LPAREN RPAREN SEMI 
             {
-              StaticMethod RESULT =null;
+              LibraryMethod RESULT =null;
 		int tleft = ((java_cup.runtime.Symbol)CUP$LibParser$stack.elementAt(CUP$LibParser$top-4)).left;
 		int tright = ((java_cup.runtime.Symbol)CUP$LibParser$stack.elementAt(CUP$LibParser$top-4)).right;
 		PrimitiveType t = (PrimitiveType)((java_cup.runtime.Symbol) CUP$LibParser$stack.elementAt(CUP$LibParser$top-4)).value;
 		int idleft = ((java_cup.runtime.Symbol)CUP$LibParser$stack.elementAt(CUP$LibParser$top-3)).left;
 		int idright = ((java_cup.runtime.Symbol)CUP$LibParser$stack.elementAt(CUP$LibParser$top-3)).right;
 		java.lang.String id = (java.lang.String)((java_cup.runtime.Symbol) CUP$LibParser$stack.elementAt(CUP$LibParser$top-3)).value;
-		RESULT = new StaticMethod(t,id,new ArrayList<Formal>() ,new ArrayList<Statement>()); 
+		RESULT = new LibraryMethod(t,id,new ArrayList<Formal>()); 
               CUP$LibParser$result = parser.getSymbolFactory().newSymbol("stmethod",2, ((java_cup.runtime.Symbol)CUP$LibParser$stack.elementAt(CUP$LibParser$top-5)), ((java_cup.runtime.Symbol)CUP$LibParser$stack.peek()), RESULT);
             }
           return CUP$LibParser$result;
@@ -308,7 +313,7 @@ class CUP$LibParser$actions {
           /*. . . . . . . . . . . . . . . . . . . .*/
           case 7: // stmethod ::= STATIC methodType IDENTIFIER LPAREN formal_block RPAREN SEMI 
             {
-              StaticMethod RESULT =null;
+              LibraryMethod RESULT =null;
 		int tleft = ((java_cup.runtime.Symbol)CUP$LibParser$stack.elementAt(CUP$LibParser$top-5)).left;
 		int tright = ((java_cup.runtime.Symbol)CUP$LibParser$stack.elementAt(CUP$LibParser$top-5)).right;
 		PrimitiveType t = (PrimitiveType)((java_cup.runtime.Symbol) CUP$LibParser$stack.elementAt(CUP$LibParser$top-5)).value;
@@ -318,7 +323,7 @@ class CUP$LibParser$actions {
 		int fbleft = ((java_cup.runtime.Symbol)CUP$LibParser$stack.elementAt(CUP$LibParser$top-2)).left;
 		int fbright = ((java_cup.runtime.Symbol)CUP$LibParser$stack.elementAt(CUP$LibParser$top-2)).right;
 		List<Formal> fb = (List<Formal>)((java_cup.runtime.Symbol) CUP$LibParser$stack.elementAt(CUP$LibParser$top-2)).value;
-		RESULT = new StaticMethod(t,id,fb,new ArrayList<Statement>()); 
+		RESULT = new LibraryMethod(t,id,fb); 
               CUP$LibParser$result = parser.getSymbolFactory().newSymbol("stmethod",2, ((java_cup.runtime.Symbol)CUP$LibParser$stack.elementAt(CUP$LibParser$top-6)), ((java_cup.runtime.Symbol)CUP$LibParser$stack.peek()), RESULT);
             }
           return CUP$LibParser$result;

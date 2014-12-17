@@ -40,7 +40,7 @@ class B extends A {
 class C {
   static void main(string[] args) {
     A[][] a;
-	A aa;
-	B.vfunc(null,5,5);
+	  A aa;
+	  B.vfunc(null,5,5);
   }
 }

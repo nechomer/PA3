@@ -9,12 +9,12 @@ import ic.semanticCheck.ScopeNode.ScopeType;
 
 public class SemanticChecker implements Visitor {
 
+	// TODO comment on fields
 	private boolean static_scope, hasReturn, isLibrary;
 	private Stack<Boolean> loop, cond_block;
 	private Type currMethodType;
 
 	public SemanticChecker() {
-		// TODO Auto-generated constructor stub
 		loop = new Stack<>();
 		cond_block = new Stack<>();
 		this.isLibrary = false;
@@ -126,10 +126,18 @@ public class SemanticChecker implements Visitor {
 	public Object visit(StaticMethod method) {
 		this.static_scope = true;
 		this.currMethodType = method.getType();
+		this.hasReturn = false;
+		if (method.getType().getName().equals("void")) {
+			this.hasReturn = true;
+		}
 		for (Statement s : method.getStatements()) {
 			s.accept(this);
 		}
 		checkParams(method);
+		if (!this.hasReturn) {
+			throw new SemanticException(method,
+					" no return statement in non void method");
+		}
 		return null;
 	}
 
@@ -218,7 +226,7 @@ public class SemanticChecker implements Visitor {
 		if (returnStatement.hasValue()) {
 			Type t = (Type) returnStatement.getValue().accept(this);
 			if (this.currMethodType.getName().equals(t.getName())) {
-				if (this.loop.empty() || !this.loop.peek().booleanValue())
+				if (this.cond_block.empty() || this.cond_block.peek().booleanValue())
 					this.hasReturn = true;
 				return this.currMethodType;
 			} else
@@ -227,7 +235,7 @@ public class SemanticChecker implements Visitor {
 								+ this.currMethodType.getName());
 		} else {
 			if (this.currMethodType.getName().equals("void")) {
-				if (this.loop.empty() || !this.loop.peek().booleanValue())
+				if (this.cond_block.empty() || this.cond_block.peek().booleanValue())
 					this.hasReturn = true;
 				return this.currMethodType;
 			} else
@@ -288,7 +296,7 @@ public class SemanticChecker implements Visitor {
 	 */
 	@Override
 	public Object visit(Break breakStatement) {
-		// TODO Auto-generated method stub
+
 		if (this.loop.empty() || !this.loop.peek().booleanValue())
 			throw new SemanticException(breakStatement,
 					"Use of 'break' statement outside of loop not allowed");
@@ -301,7 +309,7 @@ public class SemanticChecker implements Visitor {
 	 */
 	@Override
 	public Object visit(Continue continueStatement) {
-		// TODO Auto-generated method stub
+
 		if (this.loop.empty() || !this.loop.peek().booleanValue())
 			throw new SemanticException(continueStatement,
 					"Use of 'continue' statement outside of loop not allowed");
@@ -314,7 +322,7 @@ public class SemanticChecker implements Visitor {
 	 */
 	@Override
 	public Object visit(StatementsBlock statementsBlock) {
-		// TODO Auto-generated method stub
+
 		for (Statement s : statementsBlock.getStatements()) {
 			s.accept(this);
 		}
@@ -327,7 +335,7 @@ public class SemanticChecker implements Visitor {
 	 */
 	@Override
 	public Object visit(LocalVariable localVariable) {
-		// TODO Auto-generated method stub
+
 		if (localVariable.hasInitValue()) {
 			Type init = (Type) localVariable.getInitValue().accept(this);
 			if (init == null) {
@@ -381,7 +389,7 @@ public class SemanticChecker implements Visitor {
 	 */
 	@Override
 	public Object visit(ArrayLocation location) {
-		// TODO Auto-generated method stub
+
 		Object type = location.getIndex().accept(this);
 		if (type instanceof String) {
 			throw new SemanticException(location, " index should be integer");
@@ -538,10 +546,11 @@ public class SemanticChecker implements Visitor {
 
 	/**
 	 * @param thisExpression
-	 * @return
+	 * @return the type 'this' refers to
 	 */
 	@Override
 	public Object visit(This thisExpression) {
+		//check if 'this' was used inside a static scope
 		if (this.static_scope == true) {
 			throw new SemanticException(thisExpression,
 					" Use of 'this' expression inside static method is not allowed");
@@ -552,12 +561,13 @@ public class SemanticChecker implements Visitor {
 
 	/**
 	 * @param newClass
-	 * @return
+	 * @return the type of the new 'User Type' object
 	 */
 	@Override
 	public Object visit(NewClass newClass) {
-		// TODO Auto-generated method stub
+
 		Object c = newClass.scope.lookupId(newClass.getName());
+		//check if class was declared before
 		if (c == null) {
 			throw new SemanticException(newClass, newClass.getName()
 					+ " not found in symbol table");
@@ -567,13 +577,14 @@ public class SemanticChecker implements Visitor {
 
 	/**
 	 * @param newArray
-	 * @return
+	 * @return the type of the new array
 	 */
 	@Override
 	public Object visit(NewArray newArray) {
-		// TODO Auto-generated method stub
-		Type size = (Type) newArray.getSize().accept(this);
-		if (!size.getName().equals("int")) {
+
+		Type sizeType = (Type) newArray.getSize().accept(this);
+		//a new array should always be created with expression size of type int
+		if (!sizeType.getName().equals("int")) {
 			throw new SemanticException(newArray, " size should be int");
 		}
 		return newArray.getType();
@@ -581,22 +592,22 @@ public class SemanticChecker implements Visitor {
 
 	/**
 	 * @param length
-	 * @return
+	 * @return int primitive type
 	 */
 	@Override
 	public Object visit(Length length) {
-		// TODO Auto-generated method stub
+
 		length.getArray().accept(this);
 		return new PrimitiveType(length.getLine(), DataTypes.INT);
 	}
 
 	/**
 	 * @param literal
-	 * @return
+	 * @return the literal type, if literal is null returns void type.
 	 */
 	@Override
 	public Object visit(Literal literal) {
-		// TODO Auto-generated method stub
+
 		LiteralTypes literalType = literal.getType();
 		PrimitiveType ret = null;
 		switch(literalType.getDescription()) {
@@ -614,18 +625,18 @@ public class SemanticChecker implements Visitor {
 
 	/**
 	 * @param unaryOp
-	 * @return
+	 * @return the operand Type if its int, otherwise throws an exception
 	 */
 	@Override
 	public Object visit(MathUnaryOp unaryOp) {
-		// TODO Auto-generated method stub
-		Type operand = (Type) unaryOp.getOperand().accept(this);
-		switch (operand.getName()) {
+
+		Type operandType = (Type) unaryOp.getOperand().accept(this);
+		switch (operandType.getName()) {
 		case "int":
 			if (!unaryOp.getOperator().getDescription().equals("unary subtraction")) {
 				throw new SemanticException(unaryOp, " type mismatch");
 			}
-			return operand;
+			return operandType;
 		default:
 			throw new SemanticException(unaryOp, " type mismatch");
 		}
@@ -633,18 +644,18 @@ public class SemanticChecker implements Visitor {
 	
 	/**
 	 * @param unaryOp
-	 * @return
+	 * @return the operand Type if its boolean, otherwise throws an exception
 	 */
 	@Override
 	public Object visit(LogicalUnaryOp unaryOp) {
-		// TODO Auto-generated method stub
-		Type operand = (Type) unaryOp.getOperand().accept(this);
-		switch (operand.getName()) {
+
+		Type operandType = (Type) unaryOp.getOperand().accept(this);
+		switch (operandType.getName()) {
 		case "boolean":
 			if (!unaryOp.getOperator().getDescription().equals("logical negation")) {
 				throw new SemanticException(unaryOp, " type mismatch");
 			}
-			return operand;
+			return operandType;
 		default:
 			throw new SemanticException(unaryOp, " type mismatch");
 		}
@@ -652,7 +663,7 @@ public class SemanticChecker implements Visitor {
 
 	/**
 	 * @param binaryOp
-	 * @return
+	 * @return the type of the Mathematical expression which has to be int or string(if its addition).
 	 */
 	@Override
 	public Object visit(MathBinaryOp binaryOp) {
@@ -660,10 +671,10 @@ public class SemanticChecker implements Visitor {
 		Type b = (Type) binaryOp.getSecondOperand().accept(this);
 		switch (binaryOp.getOperator().getDescription()) {
 		case "addition":
-			if (a.getName().equals("int")
+			if (a.getName().equals("int") //check if both ints
 					&& b.getName().equals("int")) {
 				return a;
-			} else if (a.getName().equals("string")
+			} else if (a.getName().equals("string") //check if both strings
 					&& b.getName().equals("string")) {
 				return a;
 			} else {
@@ -689,7 +700,7 @@ public class SemanticChecker implements Visitor {
 	
 	/**
 	 * @param binaryOp
-	 * @return
+	 * @return the type of the Logical Binary expression which has to be boolean.
 	 */
 	public Object visit(LogicalBinaryOp binaryOp) {
 		Type a = (Type) binaryOp.getFirstOperand().accept(this);
@@ -720,10 +731,10 @@ public class SemanticChecker implements Visitor {
 			}
 		case "equality":
 		case "inequality":
-			if (a.getName().equals(b.getName())) {
+			if (a.getName().equals(b.getName())) { //check if both the same
 				return new PrimitiveType(binaryOp.getLine(), DataTypes.BOOLEAN);
 			} else if ((a.getName().equals("void") && b instanceof UserType)
-					|| (b.getName().equals("void") && a instanceof UserType)) {
+					|| (b.getName().equals("void") && a instanceof UserType)) { //check if one is null and the other is an UserType object
 				return new PrimitiveType(binaryOp.getLine(), DataTypes.BOOLEAN);
 			} else if (b instanceof UserType && a instanceof UserType) {
 				ICClass classA = (ICClass) binaryOp.scope.lookupId(a
@@ -731,11 +742,14 @@ public class SemanticChecker implements Visitor {
 				ICClass classB = (ICClass) binaryOp.scope.lookupId(b
 						.getName());
 				if (!isSubClass(classA.scope, classB.scope)
-						&& !isSubClass(classB.scope, classA.scope)) {
+						&& !isSubClass(classB.scope, classA.scope)) { //check if both UserType objects, if one is a subclass of the other
 					throw new SemanticException(binaryOp, "Type mismatch: "
 							+ a.getName() + " " + binaryOp.getOperator()
 							+ " " + b.getName());
 				}
+				return new PrimitiveType(binaryOp.getLine(), DataTypes.BOOLEAN);
+			} else if ((a.getName().equals("void") && b.getName().equals("string"))
+					|| (b.getName().equals("void") && a.getName().equals("string"))) { //check if one is null and the other is a string
 				return new PrimitiveType(binaryOp.getLine(), DataTypes.BOOLEAN);
 			} else {
 				throw new SemanticException(binaryOp, "Type mismatch: "
@@ -744,13 +758,24 @@ public class SemanticChecker implements Visitor {
 			}
 		}
 		return null;
-}
+	}
+	
+	/**
+	 * @param expressionBlock
+	 * @return the type of the expression within the block
+	 */
+	@Override
+	public Object visit(ExpressionBlock expressionBlock) {
+		
+		return expressionBlock.getExpression().accept(this);
+	}
 
 	/**
 	 * @param node
-	 * @return
+	 * @return class name
 	 */
 	private String lookupClassScopeName(ScopeNode node) {
+		//search until you see scope of type class, return his name
 		while (node.getType() != ScopeType.Class) {
 			node = node.getParent();
 		}
@@ -796,7 +821,8 @@ public class SemanticChecker implements Visitor {
 		}
 	}
 
-	/**Checks whether the assignment is legitimate in terms of type checking
+	/**
+	 * Checks whether the assignment is legitimate in terms of type checking
 	 * @param a
 	 * @param b
 	 * @param assignment
@@ -836,14 +862,5 @@ public class SemanticChecker implements Visitor {
 
 	}
 
-	/**
-	 * @param expressionBlock
-	 * @return
-	 */
-	@Override
-	public Object visit(ExpressionBlock expressionBlock) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 }

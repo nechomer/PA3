@@ -39,6 +39,9 @@ class B extends A {
 
 class C {
   static void main(string[] args) {
-    A[][] a;
+    A[] aa = new A[5];
+	A a = new A();
+	boolean[] b = new boolean[5];
+	aa.vfunc(new A[5],5,5);
   }
 }

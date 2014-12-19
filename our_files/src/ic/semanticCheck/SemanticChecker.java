@@ -487,21 +487,29 @@ public class SemanticChecker implements Visitor {
 							.getName());
 					ICClass classB = (ICClass) call.scope.lookupId(formal
 							.getName());
-					if (!isSubClass(classB.scope, classA.scope)) {
+					if (!isSubClass(classB.scope, classA.scope) || !(t.getDimension()==0 && formal.getDimension()==0)) {
 						throw new SemanticException(call, "Method "
 								+ ((ICClass) c).getName() + "."
 								+ call.getName()
 								+ " is not applicable for the arguments given");
 					}
+				
 				//In case this is not a call of an inherited argument,
 				//It may have been a null reference call for a user-defined type or string
-				} else if (((formal instanceof UserType) || formal.getName().equals("string")) &&
-						!t.getName().equals("null")) {
+				} else if (!(((formal instanceof UserType) || formal.getName().equals("string")) &&
+						t.getName().equals("null"))) {
 					throw new SemanticException(call, "Method "
 								+ ((ICClass) c).getName() + "."
 								+ call.getName()
 								+ " is not applicable for the arguments given");
 				}
+			} else if (t.getDimension() != formal.getDimension()) {
+				//Same types, but if dimensions are different it's still an error 
+				throw new SemanticException(call, "Method "
+						+ ((ICClass) c).getName() + "."
+						+ call.getName()
+						+ "Invalid calling of type " + t.getName() + " with " + t.getDimension() +" dimensions"
+								+ " when argument defined is of type " + formal.getName()+ " with " + formal.getDimension() +" dimensions");
 			}
 		}
 		return method.getType();
@@ -569,17 +577,25 @@ public class SemanticChecker implements Visitor {
 							.getName());
 					ICClass classB = (ICClass) call.scope.lookupId(formal
 							.getName());
-					if (!isSubClass(classB.scope, classA.scope)) {
+					if (!isSubClass(classB.scope, classA.scope) || !(t.getDimension()==0 && formal.getDimension()==0)) {
 						throw new SemanticException(call, "Method "
 								+ class_name + "." + call.getName()
 								+ " is not applicable for the arguments given");
+						
 					}
-				} else if (((formal instanceof UserType) || formal.getName().equals("string")) &&
-						!t.getName().equals("null")) {
+				} else if (!(((formal instanceof UserType) || formal.getName().equals("string")) &&
+						t.getName().equals("null"))) {
 					throw new SemanticException(call, "Method " + class_name
 							+ "." + call.getName()
 							+ " is not applicable for the arguments given");
 				}
+			} else if (t.getDimension() != formal.getDimension()) {
+				//Same types, but if dimensions are different it's still an error 
+				throw new SemanticException(call, "Method "
+						+ class_name + "."
+						+ call.getName()
+						+ "Invalid calling of type " + t.getName() + " with " + t.getDimension() +" dimensions"
+								+ " when argument defined is of type " + formal.getName()+ " with " + formal.getDimension() +" dimensions");
 			}
 		}
 		return ((Method) m).getType();

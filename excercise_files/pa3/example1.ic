@@ -2,33 +2,30 @@ class A {
   string str;
   int i;
 
-  static A sfunc(boolean b) {
+  static int sfunc(boolean b) {
     if (b) {
-		{
-		A x = new A();
+      {
         int k = 5;
-        return x;
-		}
+      }
+      return 1;
     }
     else {
       A x = new A();
       x.i = 9;
       x.str = "hello";
-      return x;
+      return 0;
     }
   }
 
-  A vfunc(A a, int max, int val) {
+  void vfunc(A a, int max, int val) {
     int[] arr = new int[max];
     int i = 0;
-    str = null;
     while (i < max){
         arr[i] = val;
         i = i + 1;
         Library.printi(i);
         if (a == null)
           break;
-		 return null;
     }
   }
 }
@@ -36,16 +33,12 @@ class A {
 class B extends A {
     int j;
 
-    static A vfunc(A a, int max, int val) {
-		return null;
+    void vfunc(A a, int max, int val) {
     }
 }
 
 class C {
   static void main(string[] args) {
     A[][] a;
-	  A aa;
-	  B.vfunc(null,5,5);
-	  aa = A.sfunc(true);
   }
 }

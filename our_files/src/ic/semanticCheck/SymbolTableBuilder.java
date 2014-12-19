@@ -49,6 +49,10 @@ public class SymbolTableBuilder implements Visitor {
         rootScope = new ScopeNode(ScopeType.Global, null, null);
         currScope = rootScope;
     }
+    public SymbolTableBuilder(String name) {
+        rootScope = new ScopeNode(ScopeType.Global, name, null);
+        currScope = rootScope;
+    }
     
     public ScopeNode getRootScope() {
         return rootScope;
@@ -154,7 +158,6 @@ public class SymbolTableBuilder implements Visitor {
     @Override
     public Object visit(PrimitiveType type) {
         type.scope = currScope;
-
         return null;
     }
 
@@ -230,10 +233,10 @@ public class SymbolTableBuilder implements Visitor {
     @Override
     public Object visit(StatementsBlock statementsBlock) {
         String parentName = currScope.getName();
-        if (parentName.charAt(0) == '@')
-            parentName = parentName.substring(parentName.lastIndexOf('@')+1);
+        if (parentName.startsWith("statement block in"))
+            parentName = parentName.substring(parentName.lastIndexOf("statement block in "));
 
-        currScope = currScope.addScope(ScopeType.StatementBlock, "@"+parentName, currScope);
+        currScope = currScope.addScope(ScopeType.StatementBlock, "statement block in "+parentName, currScope);
         statementsBlock.scope = currScope;
         
         for (Statement statement : statementsBlock.getStatements())

@@ -227,9 +227,14 @@ public class SemanticChecker implements Visitor {
 		// TODO compare return type and method type
 		if (returnStatement.hasValue()) {
 			Type t = (Type) returnStatement.getValue().accept(this);
-			if (this.currMethodType.getName().equals(t.getName())) {
+			if (this.currMethodType.getName().equals(t.getName()) || 
+					(t.getName().equals("null") &&
+				     !this.currMethodType.getName().equals("int") && !this.currMethodType.getName().equals("boolean"))) {
 				this.hasReturn = true;
 				return this.currMethodType;
+			} else if (this.currMethodType.getName().equals("void")) {
+				throw new SemanticException(returnStatement,
+						"Returning a variable of type " + t.getName() + " while expected void");
 			} else
 				throw new SemanticException(returnStatement,
 						"Return statement is not of type "
@@ -473,7 +478,7 @@ public class SemanticChecker implements Visitor {
 				//In case this is not a call of an inherited argument,
 				//It may have been a null reference call for a user-defined type or string
 				} else if (((formal instanceof UserType) || formal.getName().equals("string")) &&
-						!t.getName().equals("void")) {
+						!t.getName().equals("null")) {
 					throw new SemanticException(call, "Method "
 								+ ((ICClass) c).getName() + "."
 								+ call.getName()
@@ -552,7 +557,7 @@ public class SemanticChecker implements Visitor {
 								+ " is not applicable for the arguments given");
 					}
 				} else if (((formal instanceof UserType) || formal.getName().equals("string")) &&
-						!t.getName().equals("void")) {
+						!t.getName().equals("null")) {
 					throw new SemanticException(call, "Method " + class_name
 							+ "." + call.getName()
 							+ " is not applicable for the arguments given");
@@ -635,7 +640,7 @@ public class SemanticChecker implements Visitor {
 				break;
 			case ("String literal") : ret = new PrimitiveType(literal.getLine(), DataTypes.STRING);
 				break;
-			case ("Literal") : ret = new PrimitiveType(literal.getLine(), DataTypes.VOID);
+			case ("Literal") : ret = new PrimitiveType(literal.getLine(), DataTypes.NULL);
 				break;	
 		}
 		return ret;
@@ -751,8 +756,8 @@ public class SemanticChecker implements Visitor {
 		case "inequality":
 			if (a.getName().equals(b.getName())) { //check if both the same
 				return new PrimitiveType(binaryOp.getLine(), DataTypes.BOOLEAN);
-			} else if ((a.getName().equals("void") && b instanceof UserType)
-					|| (b.getName().equals("void") && a instanceof UserType)) { //check if one is null and the other is an UserType object
+			} else if ((a.getName().equals("null") && b instanceof UserType)
+					|| (b.getName().equals("null") && a instanceof UserType)) { //check if one is null and the other is an UserType object
 				return new PrimitiveType(binaryOp.getLine(), DataTypes.BOOLEAN);
 			} else if (b instanceof UserType && a instanceof UserType) {
 				ICClass classA = (ICClass) binaryOp.scope.lookupId(a
@@ -766,8 +771,8 @@ public class SemanticChecker implements Visitor {
 							+ " " + b.getName());
 				}
 				return new PrimitiveType(binaryOp.getLine(), DataTypes.BOOLEAN);
-			} else if ((a.getName().equals("void") && b.getName().equals("string"))
-					|| (b.getName().equals("void") && a.getName().equals("string"))) { //check if one is null and the other is a string
+			} else if ((a.getName().equals("null") && b.getName().equals("string"))
+					|| (b.getName().equals("null") && a.getName().equals("string"))) { //check if one is null and the other is a string
 				return new PrimitiveType(binaryOp.getLine(), DataTypes.BOOLEAN);
 			} else {
 				throw new SemanticException(binaryOp, "Type mismatch: "
@@ -856,15 +861,15 @@ public class SemanticChecker implements Visitor {
 					return;//If a is a subclass of b - Checking is valid
 				}
 			} else if (a instanceof UserType && b instanceof PrimitiveType) {
-				if (b.getName().equals("void")) {//b is null, so it can be assigned to a user-defined type
+				if (b.getName().equals("null")) {//b is null, so it can be assigned to a user-defined type
 					return;
 				}
 			} else if (a instanceof PrimitiveType && a.getDimension() > 0) {
-				if (b.getName().equals("void")) {//a is a primitive array - null can be assigned to it
+				if (b.getName().equals("null")) {//a is a primitive array - null can be assigned to it
 					return;
 				}
 			} else if (a instanceof PrimitiveType && a.getName().equals("string")) {
-				if (b.getName().equals("void")) {//a is a string - null can be assigned to it
+				if (b.getName().equals("null")) {//a is a string - null can be assigned to it
 					return;
 				}
 			}

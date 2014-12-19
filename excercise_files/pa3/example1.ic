@@ -2,26 +2,26 @@ class A {
   string str;
   int i;
 
-  static A sfunc(boolean b) {
+  int sfunc(boolean b) {
     if (b) {
 		{
-		A x = new A();
         int k = 5;
-        return x;
+        return k;
 		}
     }
     else {
       A x = new A();
       x.i = 9;
       x.str = "hello";
-      return x;
+      return x.i;
     }
   }
 
-  A vfunc(A a, int max, int val) {
-    int[] arr = new int[max];
+  void vfunc(A a, int max, int val) {
+    int[][] arr = new int[][max];
     int i = 0;
     str = null;
+	
     while (i < max){
         arr[i] = val;
         i = i + 1;
@@ -36,7 +36,7 @@ class A {
 class B extends A {
     int j;
 
-    static A vfunc(A a, int max, int val) {
+    static void vfunc(A a, int max, int val) {
 		return null;
     }
 }
@@ -44,8 +44,14 @@ class B extends A {
 class C {
   static void main(string[] args) {
     A[][] a;
-	  A aa;
-	  B.vfunc(null,5,5);
-	  aa = A.sfunc(true);
+	int b;
+	int[] c;
+	  A aa; 
+	  aa = new A();
+	  c = new int[5];
+	  b = c[6];
+	  B.vfunc(a,5,5);
+	  b = aa.sfunc(true);
+	  aa = a;
   }
 }

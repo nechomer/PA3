@@ -229,7 +229,7 @@ public class SemanticChecker implements Visitor {
 			Type t = (Type) returnStatement.getValue().accept(this);
 			if (this.currMethodType.getName().equals(t.getName()) || 
 					(t.getName().equals("null") &&
-				     !this.currMethodType.getName().equals("int") && !this.currMethodType.getName().equals("boolean"))) {
+				     !this.currMethodType.getName().equals("int") && !this.currMethodType.getName().equals("boolean") && !this.currMethodType.getName().equals("void"))) {
 				this.hasReturn = true;
 				return this.currMethodType;
 			} else if (this.currMethodType.getName().equals("void")) {
@@ -876,11 +876,11 @@ public class SemanticChecker implements Visitor {
 			throw new SemanticException(assignment,
 					"Invalid assignment of type " + b.getName()
 							+ " to variable of type " + a.getName());
-//TODO		} else if (a.getDimension() != b.getDimension()) {
-//			//Same types, but if dimensions are different it's still an error 
-//			throw new SemanticException(assignment,
-//					"Invalid assignment of type " + b.getName() + " with " + a.getDimension() +" dimensions"
-//							+ " to variable of type " + a.getName()+ " with " + b.getDimension() +" dimensions");
+    		} else if (a.getDimension() != b.getDimension()) {
+			//Same types, but if dimensions are different it's still an error 
+			throw new SemanticException(assignment,
+					"Invalid assignment of type " + b.getName() + " with " + a.getDimension() +" dimensions"
+							+ " to variable of type " + a.getName()+ " with " + b.getDimension() +" dimensions");
 		}
 
 	}

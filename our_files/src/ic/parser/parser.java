@@ -1537,7 +1537,7 @@ class CUP$parser$actions {
 		int eleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
 		int eright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
 		Expression e = (Expression)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
-		 RESULT = new NewArray(t, e); printGrammar("new in expr "); 
+		 t.incrementDimension(); RESULT = new NewArray(t, e); printGrammar("new in expr "); 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("expr",32, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;

@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import javax.lang.model.type.ArrayType;
 
 import ic.DataTypes;
+import ic.LiteralTypes;
 import ic.ast.ArrayLocation;
 import ic.ast.Assignment;
 import ic.ast.BinaryOp;
@@ -270,7 +271,20 @@ public class TypeTabelBuilder implements Visitor{
 	}
 	@Override
 	public Object visit(Literal literal) {
-		// TODO Auto-generated method stub
+		
+		LiteralTypes literalType = literal.getType();
+		PrimitiveType ret = null;
+		switch(literalType.getDescription()) {
+			case ("Boolean literal") : ret = new PrimitiveType(literal.getLine(), DataTypes.BOOLEAN);
+				break;
+			case ("Integer literal") : ret = new PrimitiveType(literal.getLine(), DataTypes.INT);
+				break;
+			case ("String literal") : ret = new PrimitiveType(literal.getLine(), DataTypes.STRING);
+				break;
+			case ("Literal") : ret = new PrimitiveType(literal.getLine(), DataTypes.NULL);
+				break;	
+		}
+		addParm(ret);
 		return null;
 	}
 	@Override

@@ -26,8 +26,8 @@ public class Compiler {
     		result = pp.parse();
     		programNode = (ASTNode) result.value;
 
-    		if (programNode != null) 
-    			System.out.println(programNode.accept(new PrettyPrinter(args[0])));
+    		if (programNode != null); 
+    			//System.out.println(programNode.accept(new PrettyPrinter(args[0])));
 
     		if (args.length > 1) { // Library file is also supplied
     			if (!args[1].substring(0,2).equals("-L")) {
@@ -39,8 +39,8 @@ public class Compiler {
               result = lp.parse();
               libraryProgramNode = (ASTNode) result.value;
               
-              if (libraryProgramNode != null) 
-                  System.out.println(libraryProgramNode.accept(new PrettyPrinter(LibraryFile)));
+              if (libraryProgramNode != null); 
+                  //System.out.println(libraryProgramNode.accept(new PrettyPrinter(LibraryFile)));
     		}
     		
     		// Add the Library AST to the list of class declarations
@@ -56,8 +56,7 @@ public class Compiler {
             // Build the type table builder
             TypeTabelBuilder ttb = new TypeTabelBuilder(); 
      		programNode.accept(ttb);
-     		System.out.println(ttb);
-     	    System.out.println("finished building Type Table Builder!"); 
+     		System.out.println("finished building Type Table Builder!"); 
             
 			// Run semantic checks
 			SemanticChecker sck = new SemanticChecker();
@@ -66,6 +65,10 @@ public class Compiler {
 			// Print the symbol table
             System.out.println();
             printSymbolTable(stb.getRootScope());
+            
+            // Print the Type table
+     		System.out.println(ttb);
+     	    
     		
     	} catch (ParserException | SemanticException | LexicalError e) {
     		System.out.println(e.getMessage());

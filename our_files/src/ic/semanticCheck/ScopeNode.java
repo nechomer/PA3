@@ -243,7 +243,7 @@ public class ScopeNode {
 	// Add a child scope node
 	public ScopeNode addScope(ScopeType type, String name, ScopeNode parent) {
 		ScopeNode scope = new ScopeNode(type, name, parent);
-		children.add(scope);
+		parent.children.add(scope);
 		return scope;
 	}
 

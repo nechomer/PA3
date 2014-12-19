@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 public class ScopeNode {
@@ -36,11 +37,12 @@ public class ScopeNode {
 
 	private ScopeNode parent;
 	private List<ScopeNode> children;
+	
 
 	public static enum ScopeType {
-		Global("Global Symbol Table"), Class("Class Symbol Table"), Method(
-				"Method Symbol Table"), StatementBlock(
-				"Statement Block Symbol Table");
+		Global("Global Symbol Table"), Children("Children tables"), 
+			Class("Class Symbol Table"), Method("Method Symbol Table"), 
+			StatementBlock("Statement Block Symbol Table");
 
 		private final String name;
 
@@ -247,29 +249,28 @@ public class ScopeNode {
 
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-
+		
 		sb.append(scopeType);
-		if (getName() != null)
+		if (getName() != null) {
+			if (getName().startsWith("statement block in"))
+				sb.append(" ( located in "+getName().substring(("statement block in ").length())+" )");
+			else
 			sb.append(": " + getName());
-
-		if (getParent() != null && parent.getType() != ScopeType.Global)
-			sb.append("  (parent = " + parent.getName() + ")");
-
+		}
 		sb.append("\n");
 
 		// Classes
 		for (String className : classes.keySet()) {
-			sb.append("    Class:  ");
+			sb.append("    Class: ");
 			sb.append(className);
 			sb.append("\n");
 		}
 
 		// Fields
 		for (Map.Entry<String, Field> entry : fields.entrySet()) {
-			sb.append("    Field:  ");
-			sb.append(entry.getKey());
-			sb.append(" : ");
+			sb.append("    Field: ");
 			sb.append(formatType(entry.getValue().getType()));
+			sb.append(" "+entry.getKey());
 			sb.append("\n");
 		}
 
@@ -277,31 +278,44 @@ public class ScopeNode {
 		for (Map.Entry<String, Method> entry : methods.entrySet()) {
 			if (entry.getValue() instanceof StaticMethod
 					|| entry.getValue() instanceof LibraryMethod)
-				sb.append("    Static method:  ");
+				sb.append("    Static method: ");
 			else if (entry.getValue() instanceof VirtualMethod)
-				sb.append("    Virtual method:  ");
+				sb.append("    Virtual method: ");
 
 			sb.append(entry.getKey());
-			sb.append(" : ");
+			sb.append(" {");
 			sb.append(formatSig(entry.getValue()));
+			sb.append("}");
 			sb.append("\n");
 		}
 
 		// Parameters
 		for (Map.Entry<String, Type> entry : parameters.entrySet()) {
-			sb.append("    Parameter:  ");
-			sb.append(entry.getKey());
-			sb.append(" : ");
+			sb.append("    Parameter: ");
 			sb.append(formatType(entry.getValue()));
+			sb.append(" "+entry.getKey());
 			sb.append("\n");
 		}
 
 		// Local variables
 		for (Map.Entry<String, Type> entry : localVars.entrySet()) {
-			sb.append("    Local variable:  ");
-			sb.append(entry.getKey());
-			sb.append(" : ");
+			sb.append("    Local variable: ");
 			sb.append(formatType(entry.getValue()));
+			sb.append(" "+entry.getKey());
+			sb.append("\n");
+		}
+		
+		//Children
+		if (!getChildren().isEmpty()) {
+			sb.append(ScopeType.Children+": ");
+			ListIterator<ScopeNode> childIterator = children.listIterator();
+			while(childIterator.hasNext()) {
+				ScopeNode child = childIterator.next();
+				if(childIterator.hasNext())
+					sb.append(child.scopeName.toString()+", ");
+				else
+					sb.append(child.scopeName.toString());
+			}
 			sb.append("\n");
 		}
 

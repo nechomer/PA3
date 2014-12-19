@@ -53,6 +53,12 @@ public class Compiler {
             programNode.accept(stb);
             System.out.println("finished building Symbol Table!");
             
+            // Build the type table builder
+            TypeTabelBuilder ttb = new TypeTabelBuilder(); 
+     		programNode.accept(ttb);
+     		System.out.println(ttb);
+     	    System.out.println("finished building Type Table Builder!"); 
+            
 			// Run semantic checks
 			SemanticChecker sck = new SemanticChecker();
 			programNode.accept(sck);

@@ -1,14 +1,14 @@
-class Test{
+class A{
 
-	int foo(int a, boolean b){
+	int bar(int a, boolean b){
 		int c;
 		return 0;
 	}
 }
 
-class Test2 extends Test{
+class A2 extends A{
 
-	void foo(int d,boolean e){
+	void bar(int d,boolean e){
 		int c;
 		return ;
 	}

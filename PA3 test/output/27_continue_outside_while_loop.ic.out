@@ -1,0 +1,11 @@
+Exception in thread "main" java.lang.reflect.InvocationTargetException
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader.main(JarRsrcLoader.java:58)
+Caused by: java.lang.NoSuchMethodError: ic.parser.parser.expected_token_ids()Ljava/util/List;
+	at ic.parser.parser.syntax_error(parser.java:762)
+	at java_cup.runtime.lr_parser.parse(lr_parser.java:610)
+	at ic.Compiler.main(Compiler.java:34)
+	... 5 more

@@ -1,9 +1,0 @@
-class Test{
-
-		void foo(int a){
-			int c;
-		}
-		
-		static int main(string[] args){ return 0; }
-		
-}

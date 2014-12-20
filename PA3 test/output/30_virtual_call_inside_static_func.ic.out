@@ -1,4 +1,3 @@
-Exception in thread "main" java.lang.NoSuchMethodError: ic.parser.parser.expected_token_ids()Ljava/util/List;
-	at ic.parser.parser.syntax_error(parser.java:762)
-	at java_cup.runtime.lr_parser.parse(lr_parser.java:610)
-	at ic.Compiler.main(Compiler.java:34)
+added library class!
+finished building Symbol Table!
+7: semantic error;  Calling a local virtual method from inside a static method is not allowed

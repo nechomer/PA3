@@ -1,2 +1,2 @@
 added library class!
-1: semantic error; Class Test cannot extend Test, since it's not yet defined
+1: semantic error; Class Test cannot extend Test, since it's not yet been defined

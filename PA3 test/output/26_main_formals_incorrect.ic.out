@@ -1,3 +1,3 @@
 added library class!
 finished building Symbol Table!
-7: semantic error;  Argument for main method should be 'string[] args'
+7: semantic error;  Argument for main method isn't a string of arguments!

@@ -1,0 +1,17 @@
+class Test{
+
+	int bar;
+	
+	int bar(boolean b){
+		int temp;
+		return 1;
+	}
+		
+}
+
+
+class C {
+  static void main(string[] args) {
+   int a;
+  }
+}

@@ -1,0 +1,23 @@
+class A{
+
+	void bar(boolean b){
+		int temp;
+		return 1;
+	}
+	
+}
+
+class A1 extends A{
+	String str;
+	int foo(){
+
+		str = bar(true);
+	}
+}
+
+
+class C {
+  static void main(string[] args) {
+   int a;
+  }
+}

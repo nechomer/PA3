@@ -1,0 +1,21 @@
+class Test{
+
+	int bar(boolean b){
+		int temp;
+		return 1;
+	}
+	
+	int do(int c){
+		if(true)
+			int d = 3;
+		else
+			int d = 5;
+		return 0;
+	}
+}
+
+class C {
+  static void main(string[] args) {
+   int a;
+  }
+}

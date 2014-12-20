@@ -1,0 +1,138 @@
+added library class!
+finished building Symbol Table!
+finished building Type Table Builder!
+
+Global Symbol Table: Sieve.ic
+    Class: Library
+    Class: Sieve
+Children tables: Library, Sieve
+
+Class Symbol Table: Library
+    Static method: println {string -> void}
+    Static method: print {string -> void}
+    Static method: printi {int -> void}
+    Static method: printb {boolean -> void}
+    Static method: readi { -> int}
+    Static method: readln { -> string}
+    Static method: eof { -> boolean}
+    Static method: stoi {string, int -> int}
+    Static method: itos {int -> string}
+    Static method: stoa {string -> int[]}
+    Static method: atos {int[] -> string}
+    Static method: random {int -> int}
+    Static method: time { -> int}
+    Static method: exit {int -> int}
+Children tables: println, print, printi, printb, readi, readln, eof, stoi, itos, stoa, atos, random, time, exit
+
+Method Symbol Table: println
+    Parameter: string s
+
+Method Symbol Table: print
+    Parameter: string s
+
+Method Symbol Table: printi
+    Parameter: int i
+
+Method Symbol Table: printb
+    Parameter: boolean b
+
+Method Symbol Table: readi
+
+Method Symbol Table: readln
+
+Method Symbol Table: eof
+
+Method Symbol Table: stoi
+    Parameter: string s
+    Parameter: int n
+
+Method Symbol Table: itos
+    Parameter: int i
+
+Method Symbol Table: stoa
+    Parameter: string s
+
+Method Symbol Table: atos
+    Parameter: int[] a
+
+Method Symbol Table: random
+    Parameter: int i
+
+Method Symbol Table: time
+
+Method Symbol Table: exit
+    Parameter: int i
+
+Class Symbol Table: Sieve
+    Field: int[] num
+    Virtual method: initArray { -> void}
+    Virtual method: sieveAll { -> void}
+    Virtual method: sieve {int -> void}
+    Virtual method: printPrimes { -> void}
+    Static method: main {string[] -> void}
+    Virtual method: test {string[] -> void}
+Children tables: initArray, sieveAll, sieve, printPrimes, main, test
+
+Method Symbol Table: initArray
+    Local variable: int i
+Children tables: statement block in initArray
+
+Statement Block Symbol Table ( located in initArray )
+
+Method Symbol Table: sieveAll
+    Local variable: int i
+Children tables: statement block in sieveAll
+
+Statement Block Symbol Table ( located in sieveAll )
+
+Method Symbol Table: sieve
+    Parameter: int n
+    Local variable: int i
+Children tables: statement block in sieve
+
+Statement Block Symbol Table ( located in sieve )
+
+Method Symbol Table: printPrimes
+    Local variable: int i
+Children tables: statement block in printPrimes
+
+Statement Block Symbol Table ( located in printPrimes )
+Children tables: statement block in statement block in printPrimes
+
+Statement Block Symbol Table ( located in statement block in printPrimes )
+
+Method Symbol Table: main
+    Parameter: string[] args
+
+Method Symbol Table: test
+    Parameter: string[] args
+    Local variable: int n
+Children tables: statement block in test, statement block in test
+
+Statement Block Symbol Table ( located in test )
+
+Statement Block Symbol Table ( located in test )
+
+Type Table: Sieve.ic
+    1: Primitive type: void
+    2: Primitive type: string
+    4: Primitive type: int
+    6: Primitive type: boolean
+    17: Class: Library
+    21: Class: Sieve
+    13: Array type: int[]
+    19: Array type: string[]
+    3: Method type: {string -> void}
+    5: Method type: {int -> void}
+    7: Method type: {boolean -> void}
+    8: Method type: { -> int}
+    9: Method type: { -> string}
+    10: Method type: { -> boolean}
+    11: Method type: {string, int -> int}
+    12: Method type: {int -> string}
+    14: Method type: {string -> int[]}
+    15: Method type: {int[] -> string}
+    16: Method type: {int -> int}
+    18: Method type: { -> void}
+    20: Method type: {string[] -> void}
+

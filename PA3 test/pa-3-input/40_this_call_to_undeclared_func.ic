@@ -1,0 +1,16 @@
+class A{
+
+	int bar(boolean b){
+		int temp;
+		this.foo();
+		return 1;
+	}
+}
+
+
+
+class C {
+  static void main(string[] args) {
+   int a;
+  }
+}

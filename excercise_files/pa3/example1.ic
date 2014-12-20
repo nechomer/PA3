@@ -45,11 +45,7 @@ class C {
     A[] aa = new A[5];
 	A a = new A();
 	boolean[] b = new boolean[5];
-<<<<<<< HEAD
-
-=======
 	A.sfunc(new A());
 	aa.vfunc(new A(),5,5);
->>>>>>> origin/master
   }
 }

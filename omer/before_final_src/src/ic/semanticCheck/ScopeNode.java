@@ -15,23 +15,24 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 
 public class ScopeNode {
-	// Global scope
+	
+	// Global scope params
 	private HashMap<String, ICClass> classes;
 
-	// Class scope
+	// Class scope params
 	private HashMap<String, Method> methods;
 	private HashMap<String, Field> fields;
 
-	// Method scope
+	// Method scope params
 	private HashMap<String, Type> parameters;
 
-	// Statement block scope
+	// Statement block scope params
 	private HashMap<String, Type> localVars;
 
+	// Scope params
 	private ScopeType scopeType;
 	private String scopeName;
 
@@ -40,9 +41,9 @@ public class ScopeNode {
 	
 
 	public static enum ScopeType {
-		Global("Global Symbol Table"), Children("Children tables"), 
-			Class("Class Symbol Table"), Method("Method Symbol Table"), 
-			StatementBlock("Statement Block Symbol Table");
+		Global("Global Symbol Table"), Class("Class Symbol Table"), Method(
+				"Method Symbol Table"), StatementBlock(
+				"Statement Block Symbol Table");
 
 		private final String name;
 
@@ -106,7 +107,7 @@ public class ScopeNode {
 	}
 
 	// Look up an identifier up the scope hierarchy
-	public Object lookupId(String name) {
+	public Object retrieveIdentifier(String name) {
 		Object ret = null;
 		ScopeNode node = this;
 
@@ -188,7 +189,7 @@ public class ScopeNode {
 					+ " already defined in current scope");
 
 		Object ret;
-		if ((ret = lookupId(m.getName())) != null) {
+		if ((ret = retrieveIdentifier(m.getName())) != null) {
 			if (ret instanceof Method
 					&& !methodSigEqual((Method) ret, m)) {
 				throw new SemanticException(m, "method '" + m.getName()
@@ -208,7 +209,7 @@ public class ScopeNode {
 					+ " already defined in current scope");
 
 		Object ret;
-		if ((ret = lookupId(f.getName())) != null) {
+		if ((ret = retrieveIdentifier(f.getName())) != null) {
 			if (ret instanceof Field)
 				throw new SemanticException(f, "Field " + f.getName()
 						+ " is shadowing a field with the same name");
@@ -243,34 +244,35 @@ public class ScopeNode {
 	// Add a child scope node
 	public ScopeNode addScope(ScopeType type, String name, ScopeNode parent) {
 		ScopeNode scope = new ScopeNode(type, name, parent);
-		parent.children.add(scope);
+		children.add(scope);
 		return scope;
 	}
 
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		
+
 		sb.append(scopeType);
-		if (getName() != null) {
-			if (getName().startsWith("statement block in"))
-				sb.append(" ( located in "+getName().substring(("statement block in ").length())+" )");
-			else
+		if (getName() != null)
 			sb.append(": " + getName());
-		}
+
+		if (getParent() != null && parent.getType() != ScopeType.Global)
+			sb.append("  (parent = " + parent.getName() + ")");
+
 		sb.append("\n");
 
 		// Classes
 		for (String className : classes.keySet()) {
-			sb.append("    Class: ");
+			sb.append("    Class:  ");
 			sb.append(className);
 			sb.append("\n");
 		}
 
 		// Fields
 		for (Map.Entry<String, Field> entry : fields.entrySet()) {
-			sb.append("    Field: ");
+			sb.append("    Field:  ");
+			sb.append(entry.getKey());
+			sb.append(" : ");
 			sb.append(formatType(entry.getValue().getType()));
-			sb.append(" "+entry.getKey());
 			sb.append("\n");
 		}
 
@@ -278,44 +280,31 @@ public class ScopeNode {
 		for (Map.Entry<String, Method> entry : methods.entrySet()) {
 			if (entry.getValue() instanceof StaticMethod
 					|| entry.getValue() instanceof LibraryMethod)
-				sb.append("    Static method: ");
+				sb.append("    Static method:  ");
 			else if (entry.getValue() instanceof VirtualMethod)
-				sb.append("    Virtual method: ");
+				sb.append("    Virtual method:  ");
 
 			sb.append(entry.getKey());
-			sb.append(" {");
+			sb.append(" : ");
 			sb.append(formatSig(entry.getValue()));
-			sb.append("}");
 			sb.append("\n");
 		}
 
 		// Parameters
 		for (Map.Entry<String, Type> entry : parameters.entrySet()) {
-			sb.append("    Parameter: ");
+			sb.append("    Parameter:  ");
+			sb.append(entry.getKey());
+			sb.append(" : ");
 			sb.append(formatType(entry.getValue()));
-			sb.append(" "+entry.getKey());
 			sb.append("\n");
 		}
 
 		// Local variables
 		for (Map.Entry<String, Type> entry : localVars.entrySet()) {
-			sb.append("    Local variable: ");
+			sb.append("    Local variable:  ");
+			sb.append(entry.getKey());
+			sb.append(" : ");
 			sb.append(formatType(entry.getValue()));
-			sb.append(" "+entry.getKey());
-			sb.append("\n");
-		}
-		
-		//Children
-		if (!getChildren().isEmpty()) {
-			sb.append(ScopeType.Children+": ");
-			ListIterator<ScopeNode> childIterator = children.listIterator();
-			while(childIterator.hasNext()) {
-				ScopeNode child = childIterator.next();
-				if(childIterator.hasNext())
-					sb.append(child.scopeName.toString()+", ");
-				else
-					sb.append(child.scopeName.toString());
-			}
 			sb.append("\n");
 		}
 

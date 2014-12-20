@@ -1,6 +1,6 @@
 package ic.ast;
 
-import ic.semanticCheck.FrameScope;
+import ic.semanticCheck.ScopeNode;
 
 /**
  * Abstract AST node base class.
@@ -10,7 +10,7 @@ import ic.semanticCheck.FrameScope;
 public abstract class ASTNode {
 
 	private int line;
-	public FrameScope scope;
+	public ScopeNode scope;
 
 	/**
 	 * Double dispatch method, to allow a visitor to visit a specific subclass.

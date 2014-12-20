@@ -38,23 +38,19 @@ import ic.ast.VirtualCall;
 import ic.ast.VirtualMethod;
 import ic.ast.Visitor;
 import ic.ast.While;
-import ic.semanticCheck.FrameScope.ScopeType;
+import ic.semanticCheck.ScopeNode.ScopeType;
 
 public class SymbolTableBuilder implements Visitor {
 
-    private final FrameScope rootScope;
-    private FrameScope currScope;
+    private final ScopeNode rootScope;
+    private ScopeNode currScope;
     
     public SymbolTableBuilder() {
-        rootScope = new FrameScope(ScopeType.Global, null, null);
-        currScope = rootScope;
-    }
-    public SymbolTableBuilder(String name) {
-        rootScope = new FrameScope(ScopeType.Global, name, null);
+        rootScope = new ScopeNode(ScopeType.Global, null, null);
         currScope = rootScope;
     }
     
-    public FrameScope getRootScope() {
+    public ScopeNode getRootScope() {
         return rootScope;
     }
     
@@ -72,7 +68,7 @@ public class SymbolTableBuilder implements Visitor {
     @Override
     public Object visit(ICClass icClass) {
         // Find the proper enclosing (parent) scope for a class
-        FrameScope parentScope = rootScope;
+        ScopeNode parentScope = rootScope;
         if (icClass.hasSuperClass()) {
         	ICClass sup = rootScope.getClass(icClass.getSuperClassName()); 
             if (sup == null)
@@ -150,7 +146,7 @@ public class SymbolTableBuilder implements Visitor {
     public Object visit(Formal formal) {
         formal.scope = currScope;
         
-        currScope.addFormal(formal);
+        currScope.addParameter(formal);
                 
         return null;
     }
@@ -158,6 +154,7 @@ public class SymbolTableBuilder implements Visitor {
     @Override
     public Object visit(PrimitiveType type) {
         type.scope = currScope;
+
         return null;
     }
 
@@ -233,10 +230,10 @@ public class SymbolTableBuilder implements Visitor {
     @Override
     public Object visit(StatementsBlock statementsBlock) {
         String parentName = currScope.getName();
-        if (parentName.startsWith("statement block in"))
-            parentName = parentName.substring(parentName.lastIndexOf("statement block in "));
+        if (parentName.charAt(0) == '@')
+            parentName = parentName.substring(parentName.lastIndexOf('@')+1);
 
-        currScope = currScope.addScope(ScopeType.StatementBlock, "statement block in "+parentName, currScope);
+        currScope = currScope.addScope(ScopeType.StatementBlock, "@"+parentName, currScope);
         statementsBlock.scope = currScope;
         
         for (Statement statement : statementsBlock.getStatements())

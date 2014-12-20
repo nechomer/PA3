@@ -5,7 +5,7 @@ import java.util.Stack;
 import ic.DataTypes;
 import ic.LiteralTypes;
 import ic.ast.*;
-import ic.semanticCheck.FrameScope.ScopeType;
+import ic.semanticCheck.ScopeNode.ScopeType;
 
 public class SemanticChecker implements Visitor {
 
@@ -45,7 +45,7 @@ public class SemanticChecker implements Visitor {
 					throw new SemanticException(m,
 							" Main method should have 'void' return type");
 				}
-				Type args = m.scope.getFormal("args");
+				Type args = m.scope.getParameter("args");
 				if (args == null) {
 					throw new SemanticException(m,
 							" Argument for main method should be 'string[] args'");
@@ -831,7 +831,7 @@ public class SemanticChecker implements Visitor {
 	 * @param node
 	 * @return class name
 	 */
-	private String lookupClassScopeName(FrameScope node) {
+	private String lookupClassScopeName(ScopeNode node) {
 		//search until you see scope of type class, return his name
 		while (node.getType() != ScopeType.Class) {
 			node = node.getParent();
@@ -845,11 +845,11 @@ public class SemanticChecker implements Visitor {
 	 * @param subClassA
 	 * @return Whether subClassA is indeed a subclass of A
 	 */
-	private boolean isSubClass(FrameScope classA, FrameScope subClassA) {
+	private boolean isSubClass(ScopeNode classA, ScopeNode subClassA) {
 		if (classA.getName().equals(subClassA.getName()))
 			return true;
 		while (true) {
-			FrameScope eClass = subClassA.getParent();
+			ScopeNode eClass = subClassA.getParent();
 			if (eClass.getType() == ScopeType.Global) {
 				break;
 			}

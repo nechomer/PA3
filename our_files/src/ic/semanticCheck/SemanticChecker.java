@@ -11,18 +11,19 @@ public class SemanticChecker implements Visitor {
 
 	// TODO comment on fields
 	private boolean static_scope, hasReturn, isLibrary;
-	private Stack<Boolean> loop;
+	private Stack<Boolean> whileLoop;
 	private Type currMethodType;
 
 
 	public SemanticChecker() {
-		loop = new Stack<>();
+		whileLoop = new Stack<>();
 		this.isLibrary = false;
 	}
 
-	/**
-	 * @param program
-	 * @return
+	/**Visit the program and validate each of its classes, also verify there's one valid main method in the program
+	 * 
+	 * @param program - The main program node
+	 * @return null
 	 */
 	@Override
 	public Object visit(Program program) {
@@ -43,18 +44,18 @@ public class SemanticChecker implements Visitor {
 				}
 				if (!m.getType().getName().equals("void")) {
 					throw new SemanticException(m,
-							" Main method should have 'void' return type");
+							" Main returns a non-void type! ");
 				}
 				Type args = m.scope.getFormal("args");
 				if (args == null) {
 					throw new SemanticException(m,
-							" Argument for main method should be 'string[] args'");
+							" Argument for main method isn't a string of arguments!");
 				} else if (!args.getName().equals("string")) {
 					throw new SemanticException(m,
-							" Argument for main method should be 'string[] args'");
+							" Argument for main method isn't a string of arguments!");
 				} else if (args.getDimension() != 1) {
 					throw new SemanticException(m,
-							" Argument for main method should be 'string[] args'");
+							" Argument for main method isn't a string of arguments!");
 				}
 				main_cnt++;
 			}
@@ -62,9 +63,9 @@ public class SemanticChecker implements Visitor {
 		return null;
 	}
 
-	/**
-	 * @param icClass
-	 * @return
+	/**Verify the class's members - All fields & methods
+	 * @param icClass - The class visited
+	 * @return - null
 	 */
 	@Override
 	public Object visit(ICClass icClass) {
@@ -78,9 +79,9 @@ public class SemanticChecker implements Visitor {
 		return null;
 	}
 
-	/**
-	 * @param field
-	 * @return
+	/**Verifies the field is of a valid type. If the type isn't primitive and doesn't appear in the field type table
+	 * @param field - The visited field
+	 * @return null
 	 */
 	@Override
 	public Object visit(Field field) {
@@ -95,9 +96,10 @@ public class SemanticChecker implements Visitor {
 		return null;
 	}
 
-	/**
-	 * @param method
-	 * @return
+	/**Verifies the virtual method - The return value and the arguments are all of valid types, 
+	 * the method has a return statement if declared, all statement are visited successfully
+	 * @param method - The visited method
+	 * @return null
 	 */
 	@Override
 	public Object visit(VirtualMethod method) {
@@ -119,9 +121,10 @@ public class SemanticChecker implements Visitor {
 		return null;
 	}
 
-	/**
-	 * @param method
-	 * @return
+	/**Verifies the static method - The return value and the arguments are all of valid types, 
+	 * the method has a return statement if declared, all statement are visited successfully
+	 * @param method - The visited method
+	 * @return null
 	 */
 	@Override
 	public Object visit(StaticMethod method) {
@@ -159,10 +162,6 @@ public class SemanticChecker implements Visitor {
 		}
 		this.static_scope = true;
 		this.currMethodType = method.getType();
-		//TODO: Check if necessary!!!
-//		for (Statement s : method.getStatements()) {
-//			s.accept(this);
-//		}
 		checkParams(method);
 		return null;
 	}
@@ -194,16 +193,16 @@ public class SemanticChecker implements Visitor {
 		return type;
 	}
 
-	/**
-	 * @param assignment
-	 * @return
+	/**Verify the assignment - The LHS & RHS are of valid types, and the assignment rules follow (compareTypes verifies the rules)
+	 * @param assignment - The assignment visited
+	 * @return the type of the assignment's LHS
 	 */
 	@Override
 	public Object visit(Assignment assignment) {
 		Type a = (Type) assignment.getVariable().accept(this);
 		Type b = (Type) assignment.getAssignment().accept(this);
 
-		checkAssignment(a, b, assignment);
+		compareTypes(a, b, assignment);
 
 		return a;
 	}
@@ -218,20 +217,22 @@ public class SemanticChecker implements Visitor {
 
 	}
 
-	/**
-	 * @param returnStatement
-	 * @return
+	/**Verifies the return statement - The returned variable is of the same type of the method return declaration,
+	 * or follows one of the valid terms
+	 * @param returnStatement - The returnStatement visited
+	 * @return the returned variable's type
 	 */
 	@Override
 	public Object visit(Return returnStatement) {
-		// TODO compare return type and method type
 		if (returnStatement.hasValue()) {
 			Type t = (Type) returnStatement.getValue().accept(this);
+			//The return type equals the declaration, or null is returned when string/class is declared - The statement's valid
 			if (this.currMethodType.getName().equals(t.getName()) || 
 					(t.getName().equals("null") &&
 				     !this.currMethodType.getName().equals("int") && !this.currMethodType.getName().equals("boolean") && !this.currMethodType.getName().equals("void"))) {
 				this.hasReturn = true;
 				return this.currMethodType;
+			//The method declared to return void, and still there's a variable written after the return	
 			} else if (this.currMethodType.getName().equals("void")) {
 				throw new SemanticException(returnStatement,
 						"Returning a variable of type " + t.getName() + " while expected void");
@@ -239,7 +240,7 @@ public class SemanticChecker implements Visitor {
 				throw new SemanticException(returnStatement,
 						"Return statement is not of type "
 								+ this.currMethodType.getName());
-		} else {
+		} else {//No return value - Method has to declare returning void
 			if (this.currMethodType.getName().equals("void")) {
 				this.hasReturn = true;
 				return this.currMethodType;
@@ -251,13 +252,13 @@ public class SemanticChecker implements Visitor {
 		}
 	}
 
-	/**
-	 * @param ifStatement
+	/**Verifies the if statement - The condition has a boolean typed value, 
+	 * and each if scope returns a value in case a return is required by the method
+	 * @param ifStatement - The visited if statement
 	 * @return null
 	 */
 	@Override
 	public Object visit(If ifStatement) {
-		// TODO check that every branch has return!
 		boolean operationHasReturn = false;
 		boolean elseOperationHasReturn = false;
 		boolean hasReturnBefore;
@@ -269,7 +270,7 @@ public class SemanticChecker implements Visitor {
 			throw new SemanticException(ifStatement,
 					"Non boolean condition for if statement");
 		}
-		//In case there are many if statments in a raw, we need to know which if scope is handled
+		//In case there are many if statements in a raw, we need to know which if scope is handled
 		ifStatement.getOperation().accept(this);
 		if(hasReturn) operationHasReturn = true;
 		hasReturn=false;
@@ -291,9 +292,9 @@ public class SemanticChecker implements Visitor {
 		return null;
 	}
 
-	/**
-	 * @param whileStatement
-	 * @return
+	/**Verifies the while loop - The condition is a boolean expression, and visits the statement in the while loop
+	 * @param whileStatement - The visited while statement
+	 * @return null
 	 */
 	@Override
 	public Object visit(While whileStatement) {
@@ -305,35 +306,35 @@ public class SemanticChecker implements Visitor {
 			throw new SemanticException(whileStatement,
 					"Non boolean condition for while statement");
 		}
-		this.loop.push(true);
+		this.whileLoop.push(true);
 		if (whileStatement.getOperation() != null) {
 			whileStatement.getOperation().accept(this);
 		}
-		this.loop.pop();
+		this.whileLoop.pop();
 		return null;
 	}
 
-	/**
-	 * @param breakStatement
-	 * @return
+	/**Verifies the break statement belongs to a while loop
+	 * @param breakStatement - The visited break statement
+	 * @return null
 	 */
 	@Override
 	public Object visit(Break breakStatement) {
 
-		if (this.loop.empty() || !this.loop.peek().booleanValue())
+		if (this.whileLoop.empty() || !this.whileLoop.peek().booleanValue())
 			throw new SemanticException(breakStatement,
 					"Use of 'break' statement outside of loop not allowed");
 		return null;
 	}
 
-	/**
-	 * @param continueStatement
-	 * @return
+	/**Verifies the continue statement belongs to a while loop
+	 * @param continueStatement - The visited continueStatement
+	 * @return null
 	 */
 	@Override
 	public Object visit(Continue continueStatement) {
 
-		if (this.loop.empty() || !this.loop.peek().booleanValue())
+		if (this.whileLoop.empty() || !this.whileLoop.peek().booleanValue())
 			throw new SemanticException(continueStatement,
 					"Use of 'continue' statement outside of loop not allowed");
 		return null;
@@ -352,9 +353,10 @@ public class SemanticChecker implements Visitor {
 		return null;
 	}
 
-	/**
-	 * @param localVariable
-	 * @return
+	/**Verifies the local variable definition - The definition holds a valid type, and the initial value,
+	 * if exists, follows the assignment rules
+	 * @param localVariable - The visited variable
+	 * @return the variable's type
 	 */
 	@Override
 	public Object visit(LocalVariable localVariable) {
@@ -364,14 +366,15 @@ public class SemanticChecker implements Visitor {
 			if (init == null) {
 				return null;
 			}
-			checkAssignment(localVariable.getType(), init, localVariable);
+			compareTypes(localVariable.getType(), init, localVariable);
 		}
 		return localVariable.getType();
 	}
 
-	/**
-	 * @param location
-	 * @return
+	/**Verifies the variable location calling - The location is a valid field of a class, whether it's the same class defined
+	 * or an instantiated class in the scope 
+	 * @param location - The visited location
+	 * @return the variable's type 
 	 */
 	@Override
 	public Object visit(VariableLocation location) {
@@ -396,7 +399,7 @@ public class SemanticChecker implements Visitor {
 			Type ctype = (Type) location.getLocation().accept(this);
 			ICClass c = (ICClass) location.scope.retrieveIdentifier(ctype
 					.getName());
-			//Look up the field defention in the class
+			//Look up the field definition in the class
 			Field field = c.scope.getField(location.getName());
 			if (field == null) {
 				throw new SemanticException(location, location.getName()
@@ -406,9 +409,9 @@ public class SemanticChecker implements Visitor {
 		}
 	}
 
-	/**
-	 * @param location
-	 * @return
+	/**Verifies an array location access - Of the form <array name>[<index>]
+	 * @param location - The visited array location
+	 * @return the location's type
 	 */
 	@Override
 	public Object visit(ArrayLocation location) {
@@ -423,7 +426,8 @@ public class SemanticChecker implements Visitor {
 						" index should be integer");
 			}
 		}
-		//return location.getArray().accept(this);
+		//the type returned has to be with the LHS's dimensions-1, 
+		//for example: A location to an array of integers with 1 dimension, has 0 dimensions
 		Type t = (Type)location.getArray().accept(this);
 		  Type temp = null;
 		  
@@ -444,9 +448,9 @@ public class SemanticChecker implements Visitor {
 		  return temp;
 	}
 
-	/**
+	/**Verifies a static function call
 	 * @param call
-	 * @return the method call return type if successfull
+	 * @return the method call return type if successful
 	 */
 	@Override
 	public Object visit(StaticCall call) {
@@ -515,7 +519,7 @@ public class SemanticChecker implements Visitor {
 		return method.getType();
 	}
 
-	/**
+	/**Verifies a virtual function call
 	 * @param call
 	 * @return the method return type if successful
 	 */
@@ -616,8 +620,8 @@ public class SemanticChecker implements Visitor {
 				lookupClassScopeName(thisExpression.scope));
 	}
 
-	/**
-	 * @param newClass
+	/**Verifies that the class instantiation is valid - Of an existing type
+	 * @param newClass - The visited newClass declaration
 	 * @return the type of the new 'User Type' object
 	 */
 	@Override
@@ -632,7 +636,7 @@ public class SemanticChecker implements Visitor {
 		return new UserType(newClass.getLine(), newClass.getName());
 	}
 
-	/**
+	/**Verifies the new array declaration - The array gets an integer for size when instantiated
 	 * @param newArray
 	 * @return the type of the new array
 	 */
@@ -647,9 +651,9 @@ public class SemanticChecker implements Visitor {
 		return newArray.getType();
 	}
 
-	/**
+	/**Verifies the length expression - <array>.length 
 	 * @param length
-	 * @return int primitive type
+	 * @return the length type (integer)
 	 */
 	@Override
 	public Object visit(Length length) {
@@ -658,7 +662,7 @@ public class SemanticChecker implements Visitor {
 		return new PrimitiveType(length.getLine(), DataTypes.INT);
 	}
 
-	/**
+	/**Verify the literal - Classify its data type
 	 * @param literal
 	 * @return the literal type, if literal is null returns void type.
 	 */
@@ -680,7 +684,7 @@ public class SemanticChecker implements Visitor {
 		return ret;
 	}
 
-	/**
+	/**Verify the unaryOp is of a valid type - unary subtraction
 	 * @param unaryOp
 	 * @return the operand Type if its int, otherwise throws an exception
 	 */
@@ -699,7 +703,7 @@ public class SemanticChecker implements Visitor {
 		}
 	}
 	
-	/**
+	/**Verifies the unaryOp is of a valid type - logical negative
 	 * @param unaryOp
 	 * @return the operand Type if its boolean, otherwise throws an exception
 	 */
@@ -718,7 +722,7 @@ public class SemanticChecker implements Visitor {
 		}
 	}
 
-	/**
+	/**Checks the binary operation - two integers, or two strings on addition, two integers on the rest of the ops
 	 * @param binaryOp
 	 * @return the type of the Mathematical expression which has to be int or string(if its addition).
 	 */
@@ -755,7 +759,8 @@ public class SemanticChecker implements Visitor {
 		return null;
 	}
 	
-	/**
+	/**Verifies the logical binary operation - for and/or checks both have a boolean value,
+	 * for the </<=/>=/> - two integers, for ==/!= - 
 	 * @param binaryOp
 	 * @return the type of the Logical Binary expression which has to be boolean.
 	 */
@@ -884,7 +889,7 @@ public class SemanticChecker implements Visitor {
 	 * @param b
 	 * @param assignment
 	 */
-	private void checkAssignment(Type a, Type b, ASTNode assignment) {
+	private void compareTypes(Type a, Type b, ASTNode assignment) {
 		if (!a.getName().equals(b.getName())) {//If a and b are not of the same type
 			if (a instanceof UserType && b instanceof UserType) {//Both are user-defined types, in case of an inherited class assignment
 				ICClass classA = (ICClass) assignment.scope.retrieveIdentifier(a

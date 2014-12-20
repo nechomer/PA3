@@ -20,7 +20,14 @@ public class Compiler {
     	Symbol result;
     	ASTNode programNode = null, libraryProgramNode = null;
     	String LibraryFile;
+    	String fullPath;
+    	String progFileName;
+    	int index;
     	try {
+    		
+    		fullPath = args[0];
+    		index = fullPath.lastIndexOf("\\");
+    		progFileName = fullPath.substring(index + 1);
     		
     		pp = new parser(new Lexer(new FileReader(args[0])));
     		result = pp.parse();
@@ -35,41 +42,45 @@ public class Compiler {
     				return;
     			}
     			LibraryFile = args[1].substring(2);
-              lp = new LibParser(new Lexer(new FileReader(LibraryFile)));
-              result = lp.parse();
-              libraryProgramNode = (ASTNode) result.value;
-              
-              if (libraryProgramNode != null); 
+                lp = new LibParser(new Lexer(new FileReader(LibraryFile)));
+                result = lp.parse();
+                libraryProgramNode = (ASTNode) result.value;
+              if (libraryProgramNode != null) ;
                   //System.out.println(libraryProgramNode.accept(new PrettyPrinter(LibraryFile)));
     		}
     		
     		// Add the Library AST to the list of class declarations
     		if (libraryProgramNode != null) ((Program) programNode).getClasses().add(0, ((Program) libraryProgramNode).getClasses().get(0));
     		
-    		System.out.println("added library class!");
-    		
+    		System.out.println("added library class!");    		
+    					
     		// Build the symbol table
-            SymbolTableBuilder stb = new SymbolTableBuilder();
+            SymbolTableBuilder stb = new SymbolTableBuilder(progFileName);
             programNode.accept(stb);
             System.out.println("finished building Symbol Table!");
-            
-            // Build the type table builder
-            TypeTabelBuilder ttb = new TypeTabelBuilder(); 
-     		programNode.accept(ttb);
-     		System.out.println("finished building Type Table Builder!"); 
-            
-			// Run semantic checks
+			
+            // Run semantic checks
 			SemanticChecker sck = new SemanticChecker();
 			programNode.accept(sck);
 			
-			// Print the symbol table
+            // Build the type table builder
+            TypeTabelBuilder ttb = new TypeTabelBuilder(progFileName); 
+     		programNode.accept(ttb);
+     		System.out.println("finished building Type Table Builder!"); 
+     		
+            // Print the symbol table
             System.out.println();
             printSymbolTable(stb.getRootScope());
-            
+
             // Print the Type table
+            System.out.println();
      		System.out.println(ttb);
-     	    
-    		
+     	                
+            // Print the symbol table
+            System.out.println();
+            printSymbolTable(stb.getRootScope());
+			
+			    		
     	} catch (ParserException | SemanticException | LexicalError e) {
     		System.out.println(e.getMessage());
     		//System.exit(1);

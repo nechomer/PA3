@@ -59,6 +59,7 @@ public class TypeTabelBuilder implements Visitor{
 	private HashMap<Integer, ICClass> classes;
 	private HashMap<Integer, Method> methods;
 	private int id=1;
+	String name;
 	
 	public TypeTabelBuilder()
 	{
@@ -66,6 +67,14 @@ public class TypeTabelBuilder implements Visitor{
 		arrayType = new LinkedHashMap<Integer, Type>();
 		classes = new LinkedHashMap<Integer, ICClass>();
 		methods = new LinkedHashMap<Integer, Method>();
+	}
+	public TypeTabelBuilder(String name)
+	{
+		primitive = new LinkedHashMap<Integer, Type>();
+		arrayType = new LinkedHashMap<Integer, Type>();
+		classes = new LinkedHashMap<Integer, ICClass>();
+		methods = new LinkedHashMap<Integer, Method>();
+		this.name = name;
 	}
 	
     @Override
@@ -310,7 +319,7 @@ public class TypeTabelBuilder implements Visitor{
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		
-		sb.append("Type Table:\n");
+		sb.append("Type Table: "+name+"\n");
 
 		// primitive
 		for (Map.Entry<Integer, Type> entry : primitive.entrySet()) {

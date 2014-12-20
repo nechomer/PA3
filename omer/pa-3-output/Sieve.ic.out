@@ -1,0 +1,18 @@
+added library class!
+finished building Symbol Table!
+java.lang.NullPointerException
+	at ic.semanticCheck.SemanticChecker.visit(SemanticChecker.java:626)
+	at ic.ast.NewClass.accept(NewClass.java:14)
+	at ic.semanticCheck.SemanticChecker.visit(SemanticChecker.java:827)
+	at ic.ast.ExpressionBlock.accept(ExpressionBlock.java:14)
+	at ic.semanticCheck.SemanticChecker.visit(SemanticChecker.java:545)
+	at ic.ast.VirtualCall.accept(VirtualCall.java:15)
+	at ic.semanticCheck.SemanticChecker.visit(SemanticChecker.java:217)
+	at ic.ast.CallStatement.accept(CallStatement.java:14)
+	at ic.semanticCheck.SemanticChecker.visit(SemanticChecker.java:135)
+	at ic.ast.StaticMethod.accept(StaticMethod.java:13)
+	at ic.semanticCheck.SemanticChecker.visit(SemanticChecker.java:72)
+	at ic.ast.ICClass.accept(ICClass.java:21)
+	at ic.semanticCheck.SemanticChecker.visit(SemanticChecker.java:34)
+	at ic.ast.Program.accept(Program.java:15)
+	at ic.Compiler.main(Compiler.java:65)

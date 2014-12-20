@@ -1,0 +1,3 @@
+added library class!
+finished building Symbol Table!
+9: semantic error; Invalid logical binary op (GT) on non-integer expression

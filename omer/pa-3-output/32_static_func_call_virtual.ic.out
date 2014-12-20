@@ -1,0 +1,3 @@
+added library class!
+finished building Symbol Table!
+6: semantic error;  Calling a local virtual method from inside a static method is not allowed

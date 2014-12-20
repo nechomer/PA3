@@ -1,0 +1,14 @@
+class A{
+
+	int bar(boolean b){
+		int temp;
+		temp = true;
+		return 1;
+	}
+}
+
+class C {
+  static void main(string[] args) {
+   int a;
+  }
+}

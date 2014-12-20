@@ -3,12 +3,17 @@ class A {
   int i;
 
   static int sfunc() {
-   int j;
-   j = vfunc();
-   return j;
+   return i;
   }
 
   int vfunc() {
     return 1;
+  }
+}
+
+class C {
+  static void main(string[] args) {
+    A a;
+	A.sfunc();
   }
 }

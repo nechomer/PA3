@@ -1,0 +1,16 @@
+class A{
+
+	void BAR(int a, boolean b){
+		while(true){
+			int e = 3;
+		}
+		continue;
+	}
+	
+}
+
+class C {
+  static void main(string[] args) {
+   int a;
+  }
+}

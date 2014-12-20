@@ -1,0 +1,12 @@
+class A {
+
+	static void main(string[] args){}
+
+	void vfunc(A a, int max, int val) {
+    }
+}
+
+class A2 {
+
+	static void main(string[] args){}
+}

@@ -1,0 +1,9 @@
+class A{
+
+	
+	boolean foo(int c){
+		return 5;
+	}
+	
+	static void main(string[] args){}
+}

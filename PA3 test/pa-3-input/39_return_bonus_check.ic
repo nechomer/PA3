@@ -1,0 +1,23 @@
+class A {
+
+	int bar(int d, boolean b){
+		int temp;
+		return 1;
+	}
+
+	
+	int foo(int c){
+		if(true) {
+			return 0;
+		} else {
+
+		}
+		this.bar(2,true);
+	}
+}
+
+class C {
+  static void main(string[] args) {
+   int a;
+  }
+}

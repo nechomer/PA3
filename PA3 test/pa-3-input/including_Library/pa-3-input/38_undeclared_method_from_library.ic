@@ -1,0 +1,15 @@
+class Test{
+
+		int bar(boolean b){
+			int temp;
+			Library.rrr();
+			return 1;
+		}
+		
+}
+
+class C {
+  static void main(string[] args) {
+   int a;
+  }
+}

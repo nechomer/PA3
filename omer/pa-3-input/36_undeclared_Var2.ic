@@ -1,0 +1,22 @@
+class A{
+	
+		int bar(boolean b){
+			int temp;
+			return 1;
+		}
+		
+}
+
+class A1 extends A{
+	
+	int d(boolean a){
+	temp = 3;
+	return 0;
+	}
+}
+
+class C {
+  static void main(string[] args) {
+   int a;
+  }
+}

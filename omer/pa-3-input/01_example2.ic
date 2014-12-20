@@ -23,7 +23,6 @@ class A {
     while (i < max){
         arr[i] = val;
         i = i + 1;
-        Library.printi(i);
         if (a == null)
           break;
     }
@@ -39,9 +38,6 @@ class B extends A {
 
 class C {
   static void main(string[] args) {
-    A[] aa = new A[5];
-	A a = new A();
-	boolean[] b = new boolean[5];
-
+    A[][] a;
   }
 }

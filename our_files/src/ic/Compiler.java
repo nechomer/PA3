@@ -22,21 +22,10 @@ public class Compiler {
     	ASTNode programNode = null, libraryProgramNode = null;
     	String LibraryFile;
     	String fullPath;
-    	String progFileName;
+    	String progFileName, libFileName;
     	int index;
     	try {
     		
-    		fullPath = args[0];
-    		index = fullPath.lastIndexOf(File.separator);
-    		progFileName = fullPath.substring(index + 1);
-    		
-    		pp = new parser(new Lexer(new FileReader(args[0])));
-    		result = pp.parse();
-    		programNode = (ASTNode) result.value;
-
-    		if (programNode != null); 
-    			//System.out.println(programNode.accept(new PrettyPrinter(args[0])));
-
     		if (args.length > 1) { // Library file is also supplied
     			if (!args[1].substring(0,2).equals("-L")) {
     				System.out.println("\n ERROR: Library file must be supplied with preceding -L ");
@@ -46,19 +35,30 @@ public class Compiler {
                 lp = new LibParser(new Lexer(new FileReader(LibraryFile)));
                 result = lp.parse();
                 libraryProgramNode = (ASTNode) result.value;
-              if (libraryProgramNode != null) ;
-                  //System.out.println(libraryProgramNode.accept(new PrettyPrinter(LibraryFile)));
+                fullPath = args[1];
+        		index = fullPath.lastIndexOf(File.separator);
+        		libFileName = fullPath.substring(index + 1);
+        		System.out.println("Parsed " + libFileName + " successfully!");
     		}
     		
-    		// Add the Library AST to the list of class declarations
-    		if (libraryProgramNode != null) ((Program) programNode).getClasses().add(0, ((Program) libraryProgramNode).getClasses().get(0));
+    		fullPath = args[0];
+    		index = fullPath.lastIndexOf(File.separator);
+    		progFileName = fullPath.substring(index + 1);
     		
-    		System.out.println("added library class!");    		
-    					
+    		
+    		pp = new parser(new Lexer(new FileReader(args[0])));
+    		result = pp.parse();
+    		programNode = (ASTNode) result.value;
+    		System.out.println("Parsed " + progFileName + " successfully!");
+    		
+    		// Add the Library AST to the list of class declarations
+    		if (libraryProgramNode != null) { 
+    			((Program) programNode).getClasses().add(0, ((Program) libraryProgramNode).getClasses().get(0));
+    		}
+    		    					
     		// Build the symbol table
             SymbolTableBuilder stb = new SymbolTableBuilder(progFileName);
             programNode.accept(stb);
-            System.out.println("finished building Symbol Table!");
 			
             // Run semantic checks
 			SemanticChecker sck = new SemanticChecker();
@@ -67,7 +67,6 @@ public class Compiler {
             // Build the type table builder
             TypeTabelBuilder ttb = new TypeTabelBuilder(progFileName); 
      		programNode.accept(ttb);
-     		System.out.println("finished building Type Table Builder!"); 
      		
             // Print the symbol table
             System.out.println();

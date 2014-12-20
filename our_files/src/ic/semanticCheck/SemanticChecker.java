@@ -793,25 +793,29 @@ public class SemanticChecker implements Visitor {
 			}
 		case "equality":
 		case "inequality":
-			if (a.getName().equals(b.getName())) { //check if both the same
+			//check if both the same
+			if (a.getName().equals(b.getName())) { 
 				return new PrimitiveType(binaryOp.getLine(), DataTypes.BOOLEAN);
+				//check if one is null and the other is an UserType object
 			} else if ((a.getName().equals("null") && b instanceof UserType)
-					|| (b.getName().equals("null") && a instanceof UserType)) { //check if one is null and the other is an UserType object
+					|| (b.getName().equals("null") && a instanceof UserType)) { 
 				return new PrimitiveType(binaryOp.getLine(), DataTypes.BOOLEAN);
 			} else if (b instanceof UserType && a instanceof UserType) {
+				//check if both UserType objects, if one is a subclass of the other
 				ICClass classA = (ICClass) binaryOp.scope.retrieveIdentifier(a
 						.getName());
 				ICClass classB = (ICClass) binaryOp.scope.retrieveIdentifier(b
 						.getName());
 				if (!isSubClass(classA.scope, classB.scope)
-						&& !isSubClass(classB.scope, classA.scope)) { //check if both UserType objects, if one is a subclass of the other
+						&& !isSubClass(classB.scope, classA.scope)) {
 					throw new SemanticException(binaryOp, "Type mismatch: "
 							+ a.getName() + " " + binaryOp.getOperator()
 							+ " " + b.getName());
 				}
 				return new PrimitiveType(binaryOp.getLine(), DataTypes.BOOLEAN);
+				//check if one is null and the other is a string
 			} else if ((a.getName().equals("null") && b.getName().equals("string"))
-					|| (b.getName().equals("null") && a.getName().equals("string"))) { //check if one is null and the other is a string
+					|| (b.getName().equals("null") && a.getName().equals("string"))) { 
 				return new PrimitiveType(binaryOp.getLine(), DataTypes.BOOLEAN);
 			} else {
 				throw new SemanticException(binaryOp, "Type mismatch: "
@@ -832,7 +836,7 @@ public class SemanticChecker implements Visitor {
 		return expressionBlock.getExpression().accept(this);
 	}
 
-	/**
+	/**Looks up the scope tree and checks the class the node belongs to
 	 * @param node
 	 * @return class name
 	 */
@@ -845,7 +849,7 @@ public class SemanticChecker implements Visitor {
 
 	}
 
-	/**
+	/**A function intended to check inheritance of one class from another
 	 * @param classA
 	 * @param subClassA
 	 * @return Whether subClassA is indeed a subclass of A
@@ -865,8 +869,8 @@ public class SemanticChecker implements Visitor {
 		return false;
 	}
 
-	/**
-	 * @param method
+	/**Verifies all method arguments in terms of type checking
+	 * @param method - Visited method
 	 */
 	private void checkParams(Method method) {
 		for (Formal f : method.getFormals()) {

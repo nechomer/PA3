@@ -2,8 +2,9 @@ class A {
   string str;
   int i;
 
-  static int sfunc(boolean b) {
-    if (b) {
+  static int sfunc(A b) {
+    /*
+	if (b) {
       {
         int k = 5;
       }
@@ -13,8 +14,10 @@ class A {
       A x = new A();
       x.i = 9;
       x.str = "hello";
-      return 0;
-    }
+*/    
+	return 0;
+    
+	//}
   }
 
   void vfunc(A a, int max, int val) {
@@ -42,6 +45,7 @@ class C {
     A[] aa = new A[5];
 	A a = new A();
 	boolean[] b = new boolean[5];
-	aa.vfunc(new A[5],5,5);
+	A.sfunc(new A());
+	aa.vfunc(new A(),5,5);
   }
 }

@@ -46,7 +46,11 @@ public class Compiler {
                 result = lp.parse();
                 libraryProgramNode = (ASTNode) result.value;
               
+<<<<<<< Updated upstream
               if (libraryProgramNode != null); 
+=======
+              if (libraryProgramNode != null) ;
+>>>>>>> Stashed changes
                   //System.out.println(libraryProgramNode.accept(new PrettyPrinter(LibraryFile)));
     		}
     		
@@ -55,10 +59,13 @@ public class Compiler {
     		
     		System.out.println("added library class!");
     		
+    		
+    					
     		// Build the symbol table
             SymbolTableBuilder stb = new SymbolTableBuilder(progFileName);
             programNode.accept(stb);
             System.out.println("finished building Symbol Table!");
+<<<<<<< Updated upstream
 			
             // Run semantic checks
 			SemanticChecker sck = new SemanticChecker();
@@ -77,6 +84,24 @@ public class Compiler {
             System.out.println();
      		System.out.println(ttb);
      	    
+=======
+            
+            // Print the symbol table
+            System.out.println();
+            printSymbolTable(stb.getRootScope());
+            
+            // Build the type table builder
+            TypeTabelBuilder ttb = new TypeTabelBuilder(); 
+     		programNode.accept(ttb);
+     		System.out.println(ttb);
+     	    System.out.println("finished building Type Table Builder!"); 
+            
+     	    // Run semantic checks
+    		SemanticChecker sck = new SemanticChecker();
+    		programNode.accept(sck);
+			
+			
+>>>>>>> Stashed changes
     		
     	} catch (ParserException | SemanticException | LexicalError e) {
     		System.out.println(e.getMessage());

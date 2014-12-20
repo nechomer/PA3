@@ -1,0 +1,2 @@
+added library class!
+10: semantic error; Class A1 cannot extend A2, since it's not yet defined

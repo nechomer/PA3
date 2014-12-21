@@ -760,7 +760,7 @@ public class SemanticChecker implements Visitor {
 	}
 	
 	/**Verifies the logical binary operation - for and/or checks both have a boolean value,
-	 * for the </<=/>=/> - two integers, for ==/!= - 
+	 * for the </<=/>=/> - two integers, for ==/!= according to the assignment rolls - 
 	 * @param binaryOp
 	 * @return the type of the Logical Binary expression which has to be boolean.
 	 */

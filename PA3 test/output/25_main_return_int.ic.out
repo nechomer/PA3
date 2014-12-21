@@ -1,1 +1,2 @@
-no main manifest attribute, in PA3.jar
+Parsed 25_main_return_int.ic successfully!
+7: semantic error;  Main returns a non-void type! 

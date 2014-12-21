@@ -1,1 +1,2 @@
-no main manifest attribute, in PA3.jar
+Parsed 31_field_assignment_inside_static_call.ic successfully!
+6: semantic error; Use of field inside static method is not allowed

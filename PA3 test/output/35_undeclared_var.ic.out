@@ -1,1 +1,2 @@
-no main manifest attribute, in PA3.jar
+Parsed 35_undeclared_var.ic successfully!
+5: semantic error; b not found in symbol table

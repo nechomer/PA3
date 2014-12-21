@@ -1,1 +1,2 @@
-no main manifest attribute, in PA3.jar
+Parsed 20_method_overload_formals.ic successfully!
+11: semantic error; Method bar overloads a different method by the same name

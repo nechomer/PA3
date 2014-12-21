@@ -1,1 +1,2 @@
-no main manifest attribute, in PA3.jar
+Parsed 30_virtual_call_inside_static_func.ic successfully!
+7: semantic error;  Calling a local virtual method from inside a static method is not allowed

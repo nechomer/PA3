@@ -1,1 +1,2 @@
-no main manifest attribute, in PA3.jar
+Parsed 38_undeclared_method_from_library.ic successfully!
+5: semantic error; Library class doesn't exist

@@ -6,10 +6,12 @@ class Test{
 	}
 	
 	int do(int c){
-		if(true)
+		if(true){
 			int d = 3;
-		else
+		}
+		else{
 			int d = 5;
+		}
 		return 0;
 	}
 }

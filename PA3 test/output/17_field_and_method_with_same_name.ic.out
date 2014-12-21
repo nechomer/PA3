@@ -1,1 +1,2 @@
-no main manifest attribute, in PA3.jar
+Parsed 17_field_and_method_with_same_name.ic successfully!
+5: semantic error; Method bar is overriding a field by the same name

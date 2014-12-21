@@ -1,1 +1,2 @@
-no main manifest attribute, in PA3.jar
+Parsed 23_while_condition_isnt_boolean.ic successfully!
+9: semantic error; Non boolean condition for while statement

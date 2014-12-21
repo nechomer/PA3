@@ -1,1 +1,2 @@
-no main manifest attribute, in PA3.jar
+Parsed 02_2_main_classes.ic successfully!
+11: semantic error;  Found more than one main in the file

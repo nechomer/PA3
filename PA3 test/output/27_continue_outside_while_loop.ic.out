@@ -1,1 +1,2 @@
-no main manifest attribute, in PA3.jar
+Parsed 27_continue_outside_while_loop.ic successfully!
+7: semantic error; Use of 'continue' statement outside of loop not allowed

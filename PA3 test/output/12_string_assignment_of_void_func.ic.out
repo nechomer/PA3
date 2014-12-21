@@ -1,1 +1,2 @@
-no main manifest attribute, in PA3.jar
+Parsed 12_string_assignment_of_void_func.ic successfully!
+13: semantic error; Invalid assignment of type void to variable of type String

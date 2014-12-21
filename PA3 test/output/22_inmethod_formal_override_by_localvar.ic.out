@@ -1,1 +1,2 @@
-no main manifest attribute, in PA3.jar
+Parsed 22_inmethod_formal_override_by_localvar.ic successfully!
+4: semantic error; Local variable a is overriding a parameter

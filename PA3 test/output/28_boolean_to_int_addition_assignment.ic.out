@@ -1,1 +1,2 @@
-no main manifest attribute, in PA3.jar
+Parsed 28_boolean_to_int_addition_assignment.ic successfully!
+12: semantic error; Invalid assignment of type int to variable of type boolean

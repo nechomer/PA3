@@ -1,1 +1,2 @@
-no main manifest attribute, in PA3.jar
+Parsed 13_return_wrong_type.ic successfully!
+5: semantic error; Return statement is not of type boolean

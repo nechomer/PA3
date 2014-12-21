@@ -1,1 +1,2 @@
-no main manifest attribute, in PA3.jar
+Parsed 05_While_with_statementBlock.ic successfully!
+5: semantic error; Local variable b is overriding a parameter

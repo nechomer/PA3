@@ -26,6 +26,8 @@ class A {
         if (a == null)
           break;
     }
+    //added for check
+    vfunc(a,max,val);
   }
 }
 
@@ -33,11 +35,17 @@ class B extends A {
     int j;
 
     void vfunc(A a, int max, int val) {
+    vfunc(a,max,val);
     }
 }
 
 class C {
   static void main(string[] args) {
-    A[][] a;
+    A a;
+    B b;
+    //added for check
+    a.vfunc(new A(), 1, 2);
+    b.vfunc(new A(), 3, 4);
+    A.sfunc(true);
   }
 }

@@ -1,49 +1,26 @@
-<<<<<<< HEAD
-syntax error; invalid declaration of variable inside if statement!
-=======
 Parsed 06_if_else_declare_same_var.ic successfully!
 
-Global Symbol Table: 06_if_else_declare_same_var.ic
-    Class: Test
-    Class: C
-Children tables: Test, C
+Abstract Syntax Tree: input\06_if_else_declare_same_var.ic
 
-Class Symbol Table: Test
-    Virtual method: bar {boolean -> int}
-    Virtual method: do {int -> int}
-Children tables: bar, do
-
-Method Symbol Table: bar
-    Parameter: boolean b
-    Local variable: int temp
-
-Method Symbol Table: do
-    Parameter: int c
-Children tables: statement block in do, statement block in do
-
-Statement Block Symbol Table ( located in do )
-    Local variable: int d
-
-Statement Block Symbol Table ( located in do )
-    Local variable: int d
-
-Class Symbol Table: C
-    Static method: main {string[] -> void}
-Children tables: main
-
-Method Symbol Table: main
-    Parameter: string[] args
-    Local variable: int a
-
-Type Table: 06_if_else_declare_same_var.ic
-    1: Primitive type: int
-    2: Primitive type: boolean
-    6: Primitive type: void
-    5: Class: Test
-    9: Class: C
-    7: Array type: string[]
-    3: Method type: {boolean -> int}
-    4: Method type: {int -> int}
-    8: Method type: {string[] -> void}
-
->>>>>>> origin/master
+1: Declaration of class: Test, Type: Test, Symbol table: Global
+    3: Declaration of virtual method: bar, Type: {boolean -> int}, Symbol table: Test
+        3: Parameter: b, Type: boolean, Symbol table: bar
+        4: Declaration of local variable: temp, Type: int, Symbol table: bar
+        5: Return statement, with return value, Symbol table: bar
+          5: Integer literal: 1, Type: int, Symbol table: bar
+    8: Declaration of virtual method: do, Type: {int -> int}, Symbol table: Test
+        8: Parameter: c, Type: int, Symbol table: do
+        9: If statement, with Else operation, Symbol table: do
+            9: Boolean literal: true, Type: boolean, Symbol table: do
+            9: Block of statements, Symbol table: do
+                10: Declaration of local variable: d, with initial value, Type: int, Symbol table: statement block in do
+                    10: Integer literal: 3, Type: int, Symbol table: statement block in do
+            12: Block of statements, Symbol table: do
+                13: Declaration of local variable: d, with initial value, Type: int, Symbol table: statement block in do
+                    13: Integer literal: 5, Type: int, Symbol table: statement block in do
+        15: Return statement, with return value, Symbol table: do
+          15: Integer literal: 0, Type: int, Symbol table: do
+19: Declaration of class: C, Type: C, Symbol table: Global
+    20: Declaration of static method: main, Type: {string[] -> void}, Symbol table: C
+        20: Parameter: args, Type: string[], Symbol table: main
+        21: Declaration of local variable: a, Type: int, Symbol table: main

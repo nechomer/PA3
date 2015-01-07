@@ -1,6 +1,5 @@
 Parsed 01_example2.ic successfully!
 
-<<<<<<< HEAD
 Abstract Syntax Tree: input\01_example2.ic
 
 1: Declaration of class: A, Type: A, Symbol table: Global
@@ -58,86 +57,39 @@ Abstract Syntax Tree: input\01_example2.ic
                         26: Reference to variable: a, Type: A, Symbol table: statement block in vfunc
                         26: Null literal: null, Type: null, Symbol table: statement block in vfunc
                     27: Break statement, Symbol table: statement block in vfunc
-32: Declaration of class: B, subclass of A, Type: B, Symbol table: A
-    33: Declaration of field: j, Type: int, Symbol table: B
-    35: Declaration of virtual method: vfunc, Type: {A, int, int -> void}, Symbol table: B
-        35: Parameter: a, Type: A, Symbol table: vfunc
-        35: Parameter: max, Type: int, Symbol table: vfunc
-        35: Parameter: val, Type: int, Symbol table: vfunc
-39: Declaration of class: C, Type: C, Symbol table: Global
-    40: Declaration of static method: main, Type: {string[] -> void}, Symbol table: C
-        40: Parameter: args, Type: string[], Symbol table: main
-        41: Declaration of local variable: a, Type: A[][], Symbol table: main
-=======
-Global Symbol Table: 01_example2.ic
-    Class: A
-    Class: B
-    Class: C
-Children tables: A, C
-
-Class Symbol Table: A
-    Field: string str
-    Field: int i
-    Static method: sfunc {boolean -> int}
-    Virtual method: vfunc {A, int, int -> void}
-Children tables: sfunc, vfunc, B
-
-Method Symbol Table: sfunc
-    Parameter: boolean b
-Children tables: statement block in sfunc, statement block in sfunc
-
-Statement Block Symbol Table ( located in sfunc )
-Children tables: statement block in statement block in sfunc
-
-Statement Block Symbol Table ( located in statement block in sfunc )
-    Local variable: int k
-
-Statement Block Symbol Table ( located in sfunc )
-    Local variable: A x
-
-Method Symbol Table: vfunc
-    Parameter: A a
-    Parameter: int max
-    Parameter: int val
-    Local variable: int[] arr
-    Local variable: int i
-Children tables: statement block in vfunc
-
-Statement Block Symbol Table ( located in vfunc )
-
-Class Symbol Table: B
-    Field: int j
-    Virtual method: vfunc {A, int, int -> void}
-Children tables: vfunc
-
-Method Symbol Table: vfunc
-    Parameter: A a
-    Parameter: int max
-    Parameter: int val
-
-Class Symbol Table: C
-    Static method: main {string[] -> void}
-Children tables: main
-
-Method Symbol Table: main
-    Parameter: string[] args
-    Local variable: A[][] a
-
-Type Table: 01_example2.ic
-    1: Primitive type: string
-    2: Primitive type: int
-    3: Primitive type: boolean
-    5: Primitive type: void
-    7: Primitive type: null
-    9: Class: A
-    10: Class: B, Superclass ID: 9
-    15: Class: C
-    6: Array type: int[]
-    11: Array type: string[]
-    12: Array type: A[]
-    13: Array type: A[][]
-    4: Method type: {boolean -> int}
-    8: Method type: {A, int, int -> void}
-    14: Method type: {string[] -> void}
-
->>>>>>> origin/master
+        30: Method call statement
+          30: Call to virtual method: vfunc
+              30: Reference to variable: a, Type: A, Symbol table: vfunc
+              30: Reference to variable: max, Type: int, Symbol table: vfunc
+              30: Reference to variable: val, Type: int, Symbol table: vfunc
+34: Declaration of class: B, subclass of A, Type: B, Symbol table: A
+    35: Declaration of field: j, Type: int, Symbol table: B
+    37: Declaration of virtual method: vfunc, Type: {A, int, int -> void}, Symbol table: B
+        37: Parameter: a, Type: A, Symbol table: vfunc
+        37: Parameter: max, Type: int, Symbol table: vfunc
+        37: Parameter: val, Type: int, Symbol table: vfunc
+        38: Method call statement
+          38: Call to virtual method: vfunc
+              38: Reference to variable: a, Type: A, Symbol table: vfunc
+              38: Reference to variable: max, Type: int, Symbol table: vfunc
+              38: Reference to variable: val, Type: int, Symbol table: vfunc
+42: Declaration of class: C, Type: C, Symbol table: Global
+    43: Declaration of static method: main, Type: {string[] -> void}, Symbol table: C
+        43: Parameter: args, Type: string[], Symbol table: main
+        44: Declaration of local variable: a, Type: A, Symbol table: main
+        45: Declaration of local variable: b, Type: B, Symbol table: main
+        47: Method call statement
+          47: Call to virtual method: vfunc, in external scope
+              47: Reference to variable: a, Type: A, Symbol table: main
+              47: Instantiation of class: A, Type: A, Symbol table: main
+              47: Integer literal: 1, Type: int, Symbol table: main
+              47: Integer literal: 2, Type: int, Symbol table: main
+        48: Method call statement
+          48: Call to virtual method: vfunc, in external scope
+              48: Reference to variable: b, Type: B, Symbol table: main
+              48: Instantiation of class: A, Type: A, Symbol table: main
+              48: Integer literal: 3, Type: int, Symbol table: main
+              48: Integer literal: 4, Type: int, Symbol table: main
+        49: Method call statement
+          49: Call to static method: sfunc, in class A
+              49: Boolean literal: true, Type: boolean, Symbol table: main

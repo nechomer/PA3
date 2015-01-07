@@ -1,5 +1,4 @@
 Parsed 05_While_with_statementBlock.ic successfully!
-<<<<<<< HEAD
 
 Abstract Syntax Tree: input\05_While_with_statementBlock.ic
 
@@ -19,6 +18,3 @@ Abstract Syntax Tree: input\05_While_with_statementBlock.ic
           9: Integer literal: 1, Type: int, Symbol table: foo
     12: Declaration of static method: main, Type: {string[] -> void}, Symbol table: Test
         12: Parameter: args, Type: string[], Symbol table: main
-=======
-5: semantic error; Local variable b is overriding a parameter
->>>>>>> origin/master

@@ -1,4 +1,5 @@
 Parsed 22_inmethod_formal_override_by_localvar.ic successfully!
+<<<<<<< HEAD
 
 Abstract Syntax Tree: input\22_inmethod_formal_override_by_localvar.ic
 
@@ -13,3 +14,6 @@ Abstract Syntax Tree: input\22_inmethod_formal_override_by_localvar.ic
     12: Declaration of static method: main, Type: {string[] -> void}, Symbol table: C
         12: Parameter: args, Type: string[], Symbol table: main
         13: Declaration of local variable: a, Type: int, Symbol table: main
+=======
+4: semantic error; Local variable a is overriding a parameter
+>>>>>>> origin/master

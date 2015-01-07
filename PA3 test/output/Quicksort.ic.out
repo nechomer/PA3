@@ -1,6 +1,7 @@
 Parsed -Linput/including_Library/libic.sig successfully!
 Parsed Quicksort.ic successfully!
 
+<<<<<<< HEAD
 Abstract Syntax Tree: -Linput/including_Library/libic.sig
 
 1: Declaration of class: Library, Type: Library, Symbol table: Global
@@ -48,3 +49,141 @@ java.lang.ClassCastException: IC.AST.Field cannot be cast to IC.AST.Type
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
 	at java.lang.reflect.Method.invoke(Unknown Source)
 	at org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader.main(JarRsrcLoader.java:58)
+=======
+Global Symbol Table: Quicksort.ic
+    Class: Library
+    Class: Quicksort
+Children tables: Library, Quicksort
+
+Class Symbol Table: Library
+    Static method: println {string -> void}
+    Static method: print {string -> void}
+    Static method: printi {int -> void}
+    Static method: printb {boolean -> void}
+    Static method: readi { -> int}
+    Static method: readln { -> string}
+    Static method: eof { -> boolean}
+    Static method: stoi {string, int -> int}
+    Static method: itos {int -> string}
+    Static method: stoa {string -> int[]}
+    Static method: atos {int[] -> string}
+    Static method: random {int -> int}
+    Static method: time { -> int}
+    Static method: exit {int -> int}
+Children tables: println, print, printi, printb, readi, readln, eof, stoi, itos, stoa, atos, random, time, exit
+
+Method Symbol Table: println
+    Parameter: string s
+
+Method Symbol Table: print
+    Parameter: string s
+
+Method Symbol Table: printi
+    Parameter: int i
+
+Method Symbol Table: printb
+    Parameter: boolean b
+
+Method Symbol Table: readi
+
+Method Symbol Table: readln
+
+Method Symbol Table: eof
+
+Method Symbol Table: stoi
+    Parameter: string s
+    Parameter: int n
+
+Method Symbol Table: itos
+    Parameter: int i
+
+Method Symbol Table: stoa
+    Parameter: string s
+
+Method Symbol Table: atos
+    Parameter: int[] a
+
+Method Symbol Table: random
+    Parameter: int i
+
+Method Symbol Table: time
+
+Method Symbol Table: exit
+    Parameter: int i
+
+Class Symbol Table: Quicksort
+    Field: int[] a
+    Virtual method: partition {int, int -> int}
+    Virtual method: quicksort {int, int -> void}
+    Virtual method: initArray { -> void}
+    Virtual method: printArray { -> void}
+    Static method: main {string[] -> void}
+Children tables: partition, quicksort, initArray, printArray, main
+
+Method Symbol Table: partition
+    Parameter: int low
+    Parameter: int high
+    Local variable: int pivot
+    Local variable: int i
+    Local variable: int j
+    Local variable: int tmp
+Children tables: statement block in partition
+
+Statement Block Symbol Table ( located in partition )
+
+Method Symbol Table: quicksort
+    Parameter: int low
+    Parameter: int high
+Children tables: statement block in quicksort
+
+Statement Block Symbol Table ( located in quicksort )
+    Local variable: int mid
+
+Method Symbol Table: initArray
+    Local variable: int i
+Children tables: statement block in initArray
+
+Statement Block Symbol Table ( located in initArray )
+
+Method Symbol Table: printArray
+    Local variable: int i
+Children tables: statement block in printArray
+
+Statement Block Symbol Table ( located in printArray )
+
+Method Symbol Table: main
+    Parameter: string[] args
+    Local variable: int n
+    Local variable: Quicksort s
+Children tables: statement block in main, statement block in main
+
+Statement Block Symbol Table ( located in main )
+
+Statement Block Symbol Table ( located in main )
+
+Type Table: Quicksort.ic
+    1: Primitive type: void
+    2: Primitive type: string
+    4: Primitive type: int
+    6: Primitive type: boolean
+    17: Class: Library
+    23: Class: Quicksort
+    13: Array type: int[]
+    21: Array type: string[]
+    3: Method type: {string -> void}
+    5: Method type: {int -> void}
+    7: Method type: {boolean -> void}
+    8: Method type: { -> int}
+    9: Method type: { -> string}
+    10: Method type: { -> boolean}
+    11: Method type: {string, int -> int}
+    12: Method type: {int -> string}
+    14: Method type: {string -> int[]}
+    15: Method type: {int[] -> string}
+    16: Method type: {int -> int}
+    18: Method type: {int, int -> int}
+    19: Method type: {int, int -> void}
+    20: Method type: { -> void}
+    22: Method type: {string[] -> void}
+
+>>>>>>> origin/master

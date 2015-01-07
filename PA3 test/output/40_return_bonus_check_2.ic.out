@@ -1,1 +1,30 @@
-no main manifest attribute, in PA3.jar
+Parsed 40_return_bonus_check_2.ic successfully!
+
+Abstract Syntax Tree: input\40_return_bonus_check_2.ic
+
+1: Declaration of class: A, Type: A, Symbol table: Global
+    3: Declaration of virtual method: bar, Type: {int, boolean -> int}, Symbol table: A
+        3: Parameter: d, Type: int, Symbol table: bar
+        3: Parameter: b, Type: boolean, Symbol table: bar
+        4: Declaration of local variable: temp, Type: int, Symbol table: bar
+        5: Return statement, with return value, Symbol table: bar
+          5: Integer literal: 1, Type: int, Symbol table: bar
+    9: Declaration of virtual method: foo, Type: {int -> int}, Symbol table: A
+        9: Parameter: c, Type: int, Symbol table: foo
+        10: If statement, with Else operation, Symbol table: foo
+            10: Boolean literal: true, Type: boolean, Symbol table: foo
+            10: Block of statements, Symbol table: foo
+                11: Return statement, with return value, Symbol table: statement block in foo
+                  11: Integer literal: 0, Type: int, Symbol table: statement block in foo
+            12: Block of statements, Symbol table: foo
+        15: Method call statement
+          15: Call to virtual method: bar, in external scope
+              15: Reference to 'this' instance
+              15: Integer literal: 2, Type: int, Symbol table: foo
+              15: Boolean literal: true, Type: boolean, Symbol table: foo
+        16: Return statement, with return value, Symbol table: foo
+          16: Integer literal: 1, Type: int, Symbol table: foo
+20: Declaration of class: C, Type: C, Symbol table: Global
+    21: Declaration of static method: main, Type: {string[] -> void}, Symbol table: C
+        21: Parameter: args, Type: string[], Symbol table: main
+        22: Declaration of local variable: a, Type: int, Symbol table: main

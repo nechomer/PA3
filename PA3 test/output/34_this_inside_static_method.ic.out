@@ -1,1 +1,2 @@
-no main manifest attribute, in PA3.jar
+Parsed 34_this_inside_static_method.ic successfully!
+6: semantic error;  Use of 'this' expression inside static method is not allowed

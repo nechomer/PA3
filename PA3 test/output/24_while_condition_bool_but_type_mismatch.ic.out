@@ -1,1 +1,2 @@
-no main manifest attribute, in PA3.jar
+Parsed 24_while_condition_bool_but_type_mismatch.ic successfully!
+9: semantic error; Invalid logical binary op (GT) on non-integer expression

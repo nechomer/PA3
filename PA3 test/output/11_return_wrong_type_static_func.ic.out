@@ -1,1 +1,2 @@
-no main manifest attribute, in PA3.jar
+Parsed 11_return_wrong_type_static_func.ic successfully!
+9: semantic error; Return statement is not of type int

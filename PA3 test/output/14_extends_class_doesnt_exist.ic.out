@@ -1,1 +1,2 @@
-no main manifest attribute, in PA3.jar
+Parsed 14_extends_class_doesnt_exist.ic successfully!
+10: semantic error; Class A1 cannot extend A2, since it's not yet been defined

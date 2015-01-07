@@ -1,1 +1,35 @@
-no main manifest attribute, in PA3.jar
+Parsed 41_return_bonus_check_3.ic successfully!
+
+Abstract Syntax Tree: input\41_return_bonus_check_3.ic
+
+1: Declaration of class: A, Type: A, Symbol table: Global
+    3: Declaration of virtual method: bar, Type: {int, boolean -> int}, Symbol table: A
+        3: Parameter: d, Type: int, Symbol table: bar
+        3: Parameter: b, Type: boolean, Symbol table: bar
+        4: Declaration of local variable: temp, Type: int, Symbol table: bar
+        5: Return statement, with return value, Symbol table: bar
+          5: Integer literal: 1, Type: int, Symbol table: bar
+    9: Declaration of virtual method: foo, Type: {int -> int}, Symbol table: A
+        9: Parameter: c, Type: int, Symbol table: foo
+        10: If statement, with Else operation, Symbol table: foo
+            10: Boolean literal: true, Type: boolean, Symbol table: foo
+            10: Block of statements, Symbol table: foo
+                11: If statement, Symbol table: statement block in foo
+                    11: Boolean literal: true, Type: boolean, Symbol table: statement block in foo
+                    11: Block of statements, Symbol table: statement block in foo
+                        12: Return statement, with return value, Symbol table: statement block in statement block in foo
+                          12: Integer literal: 0, Type: int, Symbol table: statement block in statement block in foo
+                14: Return statement, with return value, Symbol table: statement block in foo
+                  14: Integer literal: 1, Type: int, Symbol table: statement block in foo
+            15: Block of statements, Symbol table: foo
+                16: Return statement, with return value, Symbol table: statement block in foo
+                  16: Integer literal: 8, Type: int, Symbol table: statement block in foo
+        18: Method call statement
+          18: Call to virtual method: bar, in external scope
+              18: Reference to 'this' instance
+              18: Integer literal: 2, Type: int, Symbol table: foo
+              18: Boolean literal: true, Type: boolean, Symbol table: foo
+22: Declaration of class: C, Type: C, Symbol table: Global
+    23: Declaration of static method: main, Type: {string[] -> void}, Symbol table: C
+        23: Parameter: args, Type: string[], Symbol table: main
+        24: Declaration of local variable: a, Type: int, Symbol table: main

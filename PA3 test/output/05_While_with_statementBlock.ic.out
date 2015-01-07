@@ -1,1 +1,20 @@
-no main manifest attribute, in PA3.jar
+Parsed 05_While_with_statementBlock.ic successfully!
+
+Abstract Syntax Tree: input\05_While_with_statementBlock.ic
+
+1: Declaration of class: Test, Type: Test, Symbol table: Global
+    3: Declaration of virtual method: foo, Type: {int, boolean -> int}, Symbol table: Test
+        3: Parameter: a, Type: int, Symbol table: foo
+        3: Parameter: b, Type: boolean, Symbol table: foo
+        4: While statement, Symbol table: foo
+            4: Boolean literal: true, Type: boolean, Symbol table: foo
+            4: Block of statements, Symbol table: foo
+                5: Declaration of local variable: b, Type: boolean, Symbol table: statement block in foo
+                6: Assignment statement, Symbol table: statement block in foo
+                    6: Reference to variable: b, Type: boolean, Symbol table: statement block in foo
+                    6: Boolean literal: true, Type: boolean, Symbol table: statement block in foo
+                7: Break statement, Symbol table: statement block in foo
+        9: Return statement, with return value, Symbol table: foo
+          9: Integer literal: 1, Type: int, Symbol table: foo
+    12: Declaration of static method: main, Type: {string[] -> void}, Symbol table: Test
+        12: Parameter: args, Type: string[], Symbol table: main

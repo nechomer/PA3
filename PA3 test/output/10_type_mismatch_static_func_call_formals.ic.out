@@ -1,1 +1,2 @@
-no main manifest attribute, in PA3.jar
+Parsed 10_type_mismatch_static_func_call_formals.ic successfully!
+9: semantic error; Invalid number of arguments for C.printi

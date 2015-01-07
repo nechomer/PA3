@@ -1,1 +1,2 @@
-no main manifest attribute, in PA3.jar
+Parsed 09_type_mismatch_formals.ic successfully!
+10: semantic error; Method A.bar is not applicable for the arguments given

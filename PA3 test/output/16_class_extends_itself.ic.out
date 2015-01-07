@@ -1,1 +1,2 @@
-no main manifest attribute, in PA3.jar
+Parsed 16_class_extends_itself.ic successfully!
+1: semantic error; Class Test cannot extend Test, since it's not yet been defined

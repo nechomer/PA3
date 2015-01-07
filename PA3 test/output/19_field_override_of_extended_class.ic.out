@@ -1,1 +1,2 @@
-no main manifest attribute, in PA3.jar
+Parsed 19_field_override_of_extended_class.ic successfully!
+11: semantic error; Field d is overriding a field by the same name
